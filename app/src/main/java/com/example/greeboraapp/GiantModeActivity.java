@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -27,12 +28,13 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     String sentenceToSay;
     boolean hideMoreOptions = false;
     boolean on = false;
+    boolean sleepOn = false;
     private TextView txvResult;
     private GestureDetector gesture;
     ObjectAnimator textColorAnim;
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.giant_mode);
 
@@ -110,7 +112,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     @Override
                     public void onInit(int status) {
                         if (status != TextToSpeech.ERROR) {
-                            // replace this Locale with whatever you want
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
                             if (!on) {
@@ -132,7 +133,135 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                 });
             }
         });
+
+        findViewById(R.id.fan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            if (on) {
+                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                    }
+                });
+            }
+
+
+        });
+        findViewById(R.id.swing).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            if (on) {
+                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε χαμηλή";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+
+        findViewById(R.id.sleep).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            // replace this Locale with whatever you want
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            if (on) {
+                                if (!sleepOn) {
+                                    sentenceToSay = "Η λειτουργία ύπνου ενεργοποιήθηκε";
+                                    sleepOn = true;
+                                }else{
+                                    sentenceToSay = "Η λειτουργία ύπνου απενεργοποιήθηκε";
+                                    sleepOn = false;
+                                }
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+        findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            // replace this Locale with whatever you want
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            if (on) {
+                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+        findViewById(R.id.temp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            // replace this Locale with whatever you want
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            if (on) {
+                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+        findViewById(R.id.clean).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            // replace this Locale with whatever you want
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            if (on) {
+                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
     }
+
 
     //txvResult = (TextView) findViewById(R.id.txvResult);
     //TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
