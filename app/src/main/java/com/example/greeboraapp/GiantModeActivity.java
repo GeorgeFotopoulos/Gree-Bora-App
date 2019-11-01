@@ -1,6 +1,10 @@
 package com.example.greeboraapp;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -25,6 +29,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     boolean on = false;
     private TextView txvResult;
     private GestureDetector gesture;
+    ObjectAnimator textColorAnim;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -46,6 +51,13 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         final Button clean = findViewById(R.id.clean);
         clean.setVisibility(View.GONE);
         final TextView hideShow = findViewById(R.id.options);
+
+        textColorAnim = ObjectAnimator.ofInt(hideShow, "textColor", Color.BLACK, Color.TRANSPARENT);
+        textColorAnim.setDuration(1000);
+        textColorAnim.setEvaluator(new ArgbEvaluator());
+        textColorAnim.setRepeatCount(ValueAnimator.INFINITE);
+        textColorAnim.setRepeatMode(ValueAnimator.REVERSE);
+        textColorAnim.start();
 
         findViewById(R.id.options).setOnClickListener(new View.OnClickListener() {
 
