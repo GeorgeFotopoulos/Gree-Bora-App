@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class GiantModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
-
     TextToSpeech TTS;
     String sentenceToSay;
     boolean hideMoreOptions = false;
@@ -29,7 +28,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.giant_mode);
 
@@ -86,8 +84,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                         }
                     });
                 }
-
-
             }
         });
 
@@ -121,10 +117,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                 });
             }
         });
-
-
     }
-
 
     //txvResult = (TextView) findViewById(R.id.txvResult);
     //TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -155,7 +148,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     //    }
     //});
 
-
     public void getSpeechInput(View view) {
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -184,7 +176,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         }
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (gesture.onTouchEvent(event)) {
@@ -205,7 +196,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
     @Override
     public void onInit(int status) {
-
     }
 
     // Private class for gestures

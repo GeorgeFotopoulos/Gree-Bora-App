@@ -59,7 +59,7 @@
                     android:layout_toLeftOf="@+id/sub"
                     android:gravity="center"
                     android:text="▼"
-                    android:textSize="100sp"
+                    android:textSize="96sp"
                     app:layout_constraintBottom_toTopOf="@+id/mode"
                     app:layout_constraintEnd_toStartOf="@+id/sub"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -75,7 +75,7 @@
                     android:gravity="center"
                     android:text="▲"
                     android:textAlignment="center"
-                    android:textSize="100sp"
+                    android:textSize="96sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/plus"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -90,7 +90,7 @@
                     android:layout_toLeftOf="@+id/sub"
                     android:gravity="center"
                     android:text="MODE"
-                    android:textSize="60dp"
+                    android:textSize="54dp"
                     app:layout_constraintEnd_toStartOf="@+id/onoff"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/plus" />
@@ -165,7 +165,7 @@
                         android:layout_marginRight="8dp"
                         android:gravity="center"
                         android:text="SWING"
-                        android:textSize="50dp"
+                        android:textSize="44dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/fan"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -179,7 +179,7 @@
                         android:layout_marginLeft="8dp"
                         android:gravity="center"
                         android:text="TIMER"
-                        android:textSize="50dp"
+                        android:textSize="48dp"
                         app:layout_constraintEnd_toStartOf="@+id/sleep"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/fan" />
@@ -222,7 +222,7 @@
                         android:layout_marginRight="8dp"
                         android:gravity="center"
                         android:text="CLEAN"
-                        android:textSize="50dp"
+                        android:textSize="44dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/temp"

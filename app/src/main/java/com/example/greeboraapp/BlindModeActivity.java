@@ -19,7 +19,6 @@ import android.widget.Toast;
 import java.util.Locale;
 
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
-
     ObjectAnimator textColorAnim;
     private GestureDetector gesture;
 
@@ -36,9 +35,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         textColorAnim.setRepeatCount(ValueAnimator.INFINITE);
         textColorAnim.setRepeatMode(ValueAnimator.REVERSE);
         textColorAnim.start();
-
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -53,7 +50,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         Intent myIntent = new Intent(BlindModeActivity.this, GiantModeActivity.class);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         startActivity(myIntent);
-
     }
 
     private void onRight() {
@@ -74,13 +70,10 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     private void blink() {
-
-
     }
 
     @Override
     public void onInit(int status) {
-
     }
 
     // Private class for gestures
