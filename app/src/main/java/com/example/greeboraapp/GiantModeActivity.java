@@ -187,6 +187,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     private void onLeft() {
         finish();
         Intent myIntent = new Intent(GiantModeActivity.this, BlindModeActivity.class);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity(myIntent);
     }
 
