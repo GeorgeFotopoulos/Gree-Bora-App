@@ -48,12 +48,11 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     private void onLeft() {
         finish();
         Intent myIntent = new Intent(BlindModeActivity.this, GiantModeActivity.class);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity(myIntent);
     }
 
     private void onRight() {
-        Toast.makeText(getApplicationContext(), "Swipe LEFT to change to GIANTMode!!", Toast.LENGTH_SHORT).show();
     }
 
     public void getSpeechInput(View view) {
