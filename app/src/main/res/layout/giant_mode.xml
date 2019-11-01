@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/tempShow"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:gravity="center"
+            android:src="@drawable/ic_temp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/display">
+
+
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/inscroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/plus"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toStartOf="@+id/sub"
+                    android:layout_toLeftOf="@+id/sub"
+                    android:gravity="center"
+                    android:text="▼"
+                    android:textSize="100sp"
+                    app:layout_constraintBottom_toTopOf="@+id/mode"
+                    app:layout_constraintEnd_toStartOf="@+id/sub"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <Button
+                    android:id="@+id/sub"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:text="▲"
+                    android:textAlignment="center"
+                    android:textSize="100sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/plus"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/mode"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_below="@+id/plus"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toStartOf="@+id/sub"
+                    android:layout_toLeftOf="@+id/sub"
+                    android:gravity="center"
+                    android:text="MODE"
+                    android:textSize="60dp"
+                    app:layout_constraintEnd_toStartOf="@+id/onoff"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/plus" />
+
+                <ImageButton
+                    android:id="@+id/onoff"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_below="@+id/sub"
+                    android:layout_alignBottom="@+id/mode"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:src="@drawable/ic_off"
+                    android:text="MODE"
+                    android:textAlignment="center"
+                    android:textSize="8sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/mode"
+                    app:layout_constraintTop_toBottomOf="@+id/sub" />
+
+                <Button
+                    android:id="@+id/options"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mode"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"
+                    android:src="@drawable/ic_temp"
+                    android:text="..."
+                    android:textSize="60sp"
+                    app:layout_constraintBottom_toTopOf="@+id/moreopt"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/mode" />
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/moreopt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/options">
+
+                    <Button
+                        android:id="@+id/fan"
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:gravity="center"
+                        android:text="FAN"
+                        android:textSize="60dp"
+                        app:layout_constraintEnd_toStartOf="@+id/swing"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/swing"
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center"
+                        android:text="SWING"
+                        android:textSize="50dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/fan"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/timer"
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:gravity="center"
+                        android:text="TIMER"
+                        android:textSize="50dp"
+                        app:layout_constraintEnd_toStartOf="@+id/sleep"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/fan" />
+
+                    <Button
+                        android:id="@+id/sleep"
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center"
+                        android:text="SLEEP"
+                        android:textSize="50dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/timer"
+                        app:layout_constraintTop_toBottomOf="@+id/swing" />
+
+                    <Button
+                        android:id="@+id/temp"
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:gravity="center"
+                        android:text="TEMP"
+                        android:textSize="50dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/clean"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/timer" />
+
+                    <Button
+                        android:id="@+id/clean"
+                        android:layout_width="0dp"
+                        android:layout_height="150dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center"
+                        android:text="CLEAN"
+                        android:textSize="50dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/temp"
+                        app:layout_constraintTop_toBottomOf="@+id/sleep" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
