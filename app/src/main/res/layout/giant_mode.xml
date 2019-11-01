@@ -126,7 +126,7 @@
                     android:layout_marginRight="8dp"
                     android:gravity="center"
                     android:src="@drawable/ic_temp"
-                    android:text="..."
+                    android:text="︾"
                     android:textSize="60sp"
                     app:layout_constraintBottom_toTopOf="@+id/moreopt"
                     app:layout_constraintEnd_toEndOf="parent"

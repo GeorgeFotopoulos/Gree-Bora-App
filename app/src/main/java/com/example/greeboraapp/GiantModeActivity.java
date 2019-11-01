@@ -45,6 +45,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         temp.setVisibility(View.GONE);
         final Button clean = findViewById(R.id.clean);
         clean.setVisibility(View.GONE);
+        final TextView hideShow = findViewById(R.id.options);
 
         findViewById(R.id.options).setOnClickListener(new View.OnClickListener() {
 
@@ -52,6 +53,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
             public void onClick(View v) {
 
                 if (!hideMoreOptions) {
+                    hideShow.setText("︽");
                     fan.setVisibility(View.VISIBLE);
                     swing.setVisibility(View.VISIBLE);
                     sleep.setVisibility(View.VISIBLE);
@@ -68,6 +70,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     });
                     hideMoreOptions = true;
                 } else {
+                    hideShow.setText("︾");
                     fan.setVisibility(View.GONE);
                     swing.setVisibility(View.GONE);
                     sleep.setVisibility(View.GONE);
