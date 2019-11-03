@@ -14,15 +14,95 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <ImageView
+        android:id="@+id/display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
             android:id="@+id/tempShow"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:gravity="center"
-            android:src="@drawable/ic_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="21℃"
+            android:textSize="150sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/modeShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:text="☀"
+            android:textSize="80sp"
+            app:layout_constraintBottom_toTopOf="@+id/swingShow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tempShow"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/timerShow"
+            android:layout_width="93dp"
+            android:layout_height="93dp"
+            android:text="🕒"
+            android:textSize="75sp"
+            app:layout_constraintEnd_toStartOf="@+id/tempShow"
+            app:layout_constraintHorizontal_bias="0.285"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tempShow" />
+
+        <ImageView
+            android:id="@+id/fanShow"
+            android:layout_width="94dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/timerShow"
+            app:layout_constraintEnd_toStartOf="@+id/tempShow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/volumeAuto" />
+
+        <ImageView
+            android:id="@+id/cleanShow"
+            android:layout_width="92dp"
+            android:layout_height="83dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintEnd_toStartOf="@+id/sleepShow"
+            app:layout_constraintStart_toEndOf="@+id/timerShow"
+            app:layout_constraintTop_toBottomOf="@+id/tempShow"
+            app:srcCompat="@drawable/Tree" />
+
+        <ImageView
+            android:id="@+id/sleepShow"
+            android:layout_width="84dp"
+            android:layout_height="89dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/swingShow"
+            app:layout_constraintStart_toEndOf="@+id/cleanShow"
+            app:layout_constraintTop_toBottomOf="@+id/tempShow"
+            app:srcCompat="@drawable/moon" />
+
+        <ImageView
+            android:id="@+id/swingShow"
+            android:layout_width="102dp"
+            android:layout_height="86dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tempShow"
+            app:layout_constraintTop_toBottomOf="@+id/tempShow"
+            app:srcCompat="@drawable/fan_swing_auto" />
+
+
 
 
     </android.support.constraint.ConstraintLayout>
