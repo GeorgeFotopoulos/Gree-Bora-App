@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,15 +35,19 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     int upCount = 0;
     int downCount = 0;
     int fanCount = 0;
+    int swingCount = 0;
+    int modeCount = 0;
     long firstClickUp = 0;
     long firstClickDown = 0;
     boolean sleepOn = false;
+    boolean timerOn = false;
     final int MAX_TEMP = 30;
     final int MIN_TEMP = 16;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<>();
     private GestureDetector gesture;
     int temperature = 21;
+    int temperatureShowReal = 21;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -121,12 +126,19 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             TTS.setLanguage(localeToUse);
                             if (on) {
                                 firstClickDown = System.currentTimeMillis();
+                                TextView tempShow = findViewById(R.id.tempShow);
                                 downCount++;
+                                if (temperature - downCount >= MIN_TEMP) {
+                                    temperatureShowReal = temperature - downCount;
+                                    tempShow.setText(temperatureShowReal +"℃");
+                                }
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
                                         if (System.currentTimeMillis() - firstClickDown >= 950) {
+
                                             if (temperature - downCount >= MIN_TEMP) {
+
                                                 if (grades.containsKey(downCount)) {
                                                     if (downCount == 1) {
                                                         sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
@@ -170,12 +182,20 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
                             if (on) {
                                 firstClickUp = System.currentTimeMillis();
+                                TextView tempShow = findViewById(R.id.tempShow);
                                 upCount++;
+                                if (temperature + upCount <= MAX_TEMP) {
+                                    temperatureShowReal = temperature + upCount;
+                                    tempShow.setText(temperatureShowReal +"℃");
+                                }
+
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
                                         if (System.currentTimeMillis() - firstClickUp >= 950) {
+
                                             if (temperature + upCount <= MAX_TEMP) {
+
                                                 if (grades.containsKey(upCount)) {
                                                     if (upCount == 1) {
                                                         sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
@@ -198,6 +218,60 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                             }
                                         }
 
+                                    }
+                                }, 1000);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.mode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
+                            if (on) {
+                                firstClickDown = System.currentTimeMillis();
+                                modeCount++;
+                                if (modeCount == 6) {
+                                    modeCount = 1;
+                                }
+                                TextView mode = findViewById(R.id.modeShow);
+                                if (modeCount == 1) {
+                                    mode.setText("❆");
+                                } else if (modeCount == 2) {
+                                    mode.setText("⛆");
+                                } else if (modeCount == 3) {
+                                    mode.setText("✤");
+                                } else if (modeCount == 4) {
+                                    mode.setText("☼");
+                                } else {
+                                    mode.setText("A");
+                                }
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                            if (modeCount == 1) {
+                                                sentenceToSay = "Η λειτουργία του κλιματιστικού, ρυθμίστηκε σε Ψυχρή.";
+                                            } else if (modeCount == 2) {
+                                                sentenceToSay = "Η λειτουργία του κλιματιστικού, ρυθμίστηκε σε Αφύγρανση .";
+                                            } else if (modeCount == 3) {
+                                                sentenceToSay = "Η λειτουργία του κλιματιστικού, ρυθμίστηκε σε Ανεμιστήρας .";
+                                            } else if (modeCount == 4) {
+                                                sentenceToSay = "Η λειτουργία του κλιματιστικού, ρυθμίστηκε σε Θερμή.";
+                                            } else {
+                                                sentenceToSay = "Η λειτουργία του κλιματιστικού, ρυθμίστηκε σε Αυτόματη.";
+                                            }
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        }
                                     }
                                 }, 1000);
                             }
@@ -258,27 +332,37 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
-
+                            TTS.setPitch((float) 0.9);
                             if (on) {
                                 firstClickDown = System.currentTimeMillis();
                                 fanCount++;
                                 if (fanCount == 5) {
                                     fanCount = 1;
                                 }
+                                ImageView fan = findViewById(R.id.fanShow);
+                                if (fanCount == 1) {
+                                    fan.setImageResource(R.drawable.volume_low);
+                                } else if (fanCount == 2) {
+                                    fan.setImageResource(R.drawable.volume_mid);
+                                } else if (fanCount == 3) {
+                                    fan.setImageResource(R.drawable.volume_full);
+                                } else {
+                                    fan.setImageResource(R.drawable.volume_auto);
+                                }
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
                                         if (System.currentTimeMillis() - firstClickDown >= 950) {
-                                            if(fanCount == 1){
-                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
-                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                            }else if(fanCount == 1){
-                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
-                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                            } else{
-
+                                            if (fanCount == 1) {
+                                                sentenceToSay = "Η ένταση του ανεμιστήρα, ρυθμίστηκε σε χαμηλή.";
+                                            } else if (fanCount == 2) {
+                                                sentenceToSay = "Η ένταση του ανεμιστήρα, ρυθμίστηκε σε μεσαία.";
+                                            } else if (fanCount == 3) {
+                                                sentenceToSay = "Η ένταση του ανεμιστήρα, ρυθμίστηκε σε υψηλή.";
+                                            } else {
+                                                sentenceToSay = "Η ένταση του ανεμιστήρα, ρυθμίστηκε σε αυτόματη.";
                                             }
-
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         }
                                     }
                                 }, 1000);
@@ -286,14 +370,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                         }
                     }
                 });
-
-                Handler h = new Handler();
-                h.postDelayed(new Runnable() {
-                    public void run() {
-
-
-                    }
-                }, 1000);
             }
         });
 
@@ -306,9 +382,41 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
                             if (on) {
-                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε χαμηλή";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                ImageView swing = findViewById(R.id.swingShow);
+                                firstClickDown = System.currentTimeMillis();
+                                swingCount++;
+                                if (swingCount == 5) {
+                                    swingCount = 1;
+                                }
+                                if (swingCount == 1) {
+                                    swing.setImageResource(R.drawable.fan_swing_down);
+                                } else if (swingCount == 2) {
+                                    swing.setImageResource(R.drawable.fan_swing_mid);
+                                } else if (swingCount == 3) {
+                                    swing.setImageResource(R.drawable.fan_swing_up);
+                                } else {
+                                    swing.setImageResource(R.drawable.fan_swing_auto);
+                                }
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+
+                                            if (swingCount == 1) {
+                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε χαμηλή";
+                                            } else if (swingCount == 2) {
+                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε μεσαία";
+                                            } else if (swingCount == 3) {
+                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε υψηλή";
+                                            } else {
+                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε ολική";
+                                            }
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        }
+                                    }
+                                }, 1000);
                             }
                         }
                     }
@@ -326,15 +434,28 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             // replace this Locale with whatever you want
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
                             if (on) {
-                                if (!sleepOn) {
-                                    sentenceToSay = "Η λειτουργία ύπνου ενεργοποιήθηκε";
-                                    sleepOn = true;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ύπνου απενεργοποιήθηκε";
-                                    sleepOn = false;
-                                }
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                firstClickDown = System.currentTimeMillis();
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                            ImageView sleep = findViewById(R.id.sleepShow);
+                                            if (sleepOn) {
+                                                sentenceToSay = "Η λειτουργία ύπνου απενεργοποιήθηκε.";
+                                                sleep.setVisibility(View.INVISIBLE);
+                                                sleepOn = false;
+                                            } else {
+                                                sentenceToSay = "Η λειτουργία ύπνου ενεργοποιήθηκε.";
+                                                sleep.setVisibility(View.VISIBLE);
+                                                sleep.setImageResource(R.drawable.moon);
+                                                sleepOn = true;
+                                            }
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        }
+                                    }
+                                }, 1000);
                             }
                         }
                     }
@@ -352,9 +473,27 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             // replace this Locale with whatever you want
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
                             if (on) {
-                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                firstClickDown = System.currentTimeMillis();
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        TextView timer = findViewById(R.id.timerShow);
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                            if (timerOn) {
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                                timer.setVisibility(View.INVISIBLE);
+                                                timerOn = false;
+                                            } else {
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
+                                                timer.setVisibility(View.VISIBLE);
+                                                timerOn = true;
+                                            }
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        }
+                                    }
+                                }, 1000);
                             }
                         }
                     }
@@ -372,6 +511,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             // replace this Locale with whatever you want
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
                             if (on) {
                                 sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
@@ -392,6 +532,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             // replace this Locale with whatever you want
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
                             if (on) {
                                 sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
