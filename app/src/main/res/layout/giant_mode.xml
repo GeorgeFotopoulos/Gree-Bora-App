@@ -84,7 +84,7 @@
                     android:id="@+id/mode"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
-                    android:layout_below="@+id/plus"
+                    android:layout_below="@+id/down"
                     android:layout_alignParentLeft="true"
                     android:layout_toStartOf="@+id/up"
                     android:layout_toLeftOf="@+id/up"
