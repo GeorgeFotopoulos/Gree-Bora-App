@@ -33,13 +33,16 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     boolean on = false;
     int upCount = 0;
     int downCount = 0;
+    int fanCount = 0;
     long firstClickUp = 0;
     long firstClickDown = 0;
     boolean sleepOn = false;
+    final int MAX_TEMP = 30;
+    final int MIN_TEMP = 16;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<>();
-    private TextView command;
     private GestureDetector gesture;
+    int temperature = 21;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -47,7 +50,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         super.onCreate(savedInstanceState);
         setContentView(R.layout.giant_mode);
         grades.put(1, "έναν");
-        grades.put(3, "τρείς");
+        grades.put(3, "τρεις");
         grades.put(4, "τέσσερις");
         grades.put(13, "δεκατρείς");
         grades.put(14, "δεκατέσσερις");
@@ -67,6 +70,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         final Button clean = findViewById(R.id.clean);
         clean.setVisibility(View.GONE);
         final TextView hideShow = findViewById(R.id.options);
+
 
         textColorAnim = ObjectAnimator.ofInt(hideShow, "flicker", Color.BLACK, Color.TRANSPARENT);
         textColorAnim.setDuration(1000);
@@ -115,29 +119,35 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setPitch((float) 0.9);
                             TTS.setLanguage(localeToUse);
-                            firstClickDown = System.currentTimeMillis();
                             if (on) {
                                 firstClickDown = System.currentTimeMillis();
                                 downCount++;
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickDown >= 1000) {
-                                            if (grades.containsKey(downCount)) {
-                                                if (downCount == 1) {
-                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό";
-                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                            if (temperature - downCount >= MIN_TEMP) {
+                                                if (grades.containsKey(downCount)) {
+                                                    if (downCount == 1) {
+                                                        sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    } else {
+                                                        sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμούς.";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    }
                                                 } else {
-                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμούς";
+                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + downCount + " βαθμούς.";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 }
+                                                temperature = temperature - downCount;
+                                                downCount = 0;
                                             } else {
-                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + downCount + " βαθμούς";
+                                                sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι 16 βαθμούς.";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                temperature = MIN_TEMP;
+                                                downCount = 0;
                                             }
-                                            downCount = 0;
                                         }
-
                                     }
                                 }, 1000);
                             }
@@ -164,20 +174,28 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickUp >= 1000) {
-                                            if (grades.containsKey(upCount)) {
-                                                if (upCount == 1) {
-                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
-                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        if (System.currentTimeMillis() - firstClickUp >= 950) {
+                                            if (temperature + upCount <= MAX_TEMP) {
+                                                if (grades.containsKey(upCount)) {
+                                                    if (upCount == 1) {
+                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    } else {
+                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμούς";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    }
                                                 } else {
-                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμούς";
+                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + upCount + " βαθμούς";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 }
+                                                temperature = temperature + upCount;
+                                                upCount = 0;
                                             } else {
-                                                sentenceToSay = "Αύξηση θερμοκρασίας κατά " + upCount + " βαθμούς";
+                                                sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι 30 βαθμούς.";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                temperature = MAX_TEMP;
+                                                upCount = 0;
                                             }
-                                            upCount = 0;
                                         }
 
                                     }
@@ -240,13 +258,42 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
+
                             if (on) {
-                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                firstClickDown = System.currentTimeMillis();
+                                fanCount++;
+                                if (fanCount == 5) {
+                                    fanCount = 1;
+                                }
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                            if(fanCount == 1){
+                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                            }else if(fanCount == 1){
+                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                            } else{
+
+                                            }
+
+                                        }
+                                    }
+                                }, 1000);
                             }
                         }
                     }
                 });
+
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    public void run() {
+
+
+                    }
+                }, 1000);
             }
         });
 
@@ -369,20 +416,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case 10:
-                if (resultCode == RESULT_OK && data != null) {
-                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    command.setText(result.get(0));
-                }
-                break;
-        }
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (gesture.onTouchEvent(event)) {
             return true;
@@ -390,14 +423,13 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         return super.onTouchEvent(event);
     }
 
-    private void onLeft() {
-    }
-
     private void onRight() {
         finish();
         Intent myIntent = new Intent(GiantModeActivity.this, BlindModeActivity.class);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         startActivity(myIntent);
+        myIntent.putExtra("onOff", on);
+        myIntent.putExtra("temperature", temperature);
     }
 
     @Override
@@ -419,13 +451,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                 if (diffAbs > SWIPE_MAX_OFF_PATH)
                     return false;
 
-                // Left swipe
-                if (diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    GiantModeActivity.this.onLeft();
-                }
-                // Right swipe
-
-                else if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                     GiantModeActivity.this.onRight();
                 }
             } catch (Exception e) {
