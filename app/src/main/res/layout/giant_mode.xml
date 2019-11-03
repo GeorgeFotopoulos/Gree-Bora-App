@@ -51,24 +51,24 @@
                 android:layout_height="match_parent">
 
                 <Button
-                    android:id="@+id/plus"
+                    android:id="@+id/down"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
                     android:layout_alignParentLeft="true"
-                    android:layout_toStartOf="@+id/sub"
-                    android:layout_toLeftOf="@+id/sub"
+                    android:layout_toStartOf="@+id/up"
+                    android:layout_toLeftOf="@+id/up"
                     android:gravity="center"
                     android:text="▼"
                     android:textSize="96sp"
                     app:layout_constraintBottom_toTopOf="@+id/mode"
-                    app:layout_constraintEnd_toStartOf="@+id/sub"
+                    app:layout_constraintEnd_toStartOf="@+id/up"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
                 <Button
-                    android:id="@+id/sub"
+                    android:id="@+id/up"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
                     android:layout_alignParentRight="true"
@@ -77,7 +77,7 @@
                     android:textAlignment="center"
                     android:textSize="96sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/plus"
+                    app:layout_constraintStart_toEndOf="@+id/down"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
@@ -86,20 +86,20 @@
                     android:layout_height="150dp"
                     android:layout_below="@+id/plus"
                     android:layout_alignParentLeft="true"
-                    android:layout_toStartOf="@+id/sub"
-                    android:layout_toLeftOf="@+id/sub"
+                    android:layout_toStartOf="@+id/up"
+                    android:layout_toLeftOf="@+id/up"
                     android:gravity="center"
                     android:text="MODE"
                     android:textSize="54dp"
                     app:layout_constraintEnd_toStartOf="@+id/onoff"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/plus" />
+                    app:layout_constraintTop_toBottomOf="@+id/down" />
 
                 <ImageButton
                     android:id="@+id/onoff"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
-                    android:layout_below="@+id/sub"
+                    android:layout_below="@+id/up"
                     android:layout_alignBottom="@+id/mode"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
@@ -109,7 +109,7 @@
                     android:textSize="8sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/mode"
-                    app:layout_constraintTop_toBottomOf="@+id/sub" />
+                    app:layout_constraintTop_toBottomOf="@+id/up" />
 
                 <Button
                     android:id="@+id/options"

@@ -5,10 +5,14 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -20,7 +24,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class GiantModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
@@ -28,15 +35,28 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     String sentenceToSay;
     boolean hideMoreOptions = false;
     boolean on = false;
+    boolean pressed = false;
+    int upCount = 0;
+    long firstClick = 0;
+    long differenceBetweenClicks = 0;
+    long toSpeak = 0;
     boolean sleepOn = false;
     private TextView txvResult;
     private GestureDetector gesture;
     ObjectAnimator textColorAnim;
+    HashMap<Integer, String> grades = new HashMap<Integer, String>();
 
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.giant_mode);
+        grades.put(1, "έναν");
+        grades.put(3, "τρείς");
+        grades.put(4, "τέσσερις");
+        grades.put(13, "δεκατρείς");
+        grades.put(14, "δεκατέσσερις");
 
         gesture = new GestureDetector(new GiantModeActivity.SwipeGestureDetector());
 
@@ -104,6 +124,90 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
             }
         });
 
+        findViewById(R.id.down).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setPitch((float) 0.8);
+                            TTS.setLanguage(localeToUse);
+                            firstClick = System.currentTimeMillis();
+                            if (on) {
+                                upCount++;
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClick >= 2000) {
+                                            if (grades.containsKey(upCount)) {
+                                                if (upCount == 1) {
+                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
+                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                } else {
+                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμούς";
+                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                }
+                                            } else {
+                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + upCount + " βαθμούς";
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                            }
+                                            upCount = 0;
+                                        }
+
+                                    }
+                                }, 2000);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.up).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setPitch((float) 0.8);
+                            TTS.setLanguage(localeToUse);
+                            firstClick = System.currentTimeMillis();
+                            if (on) {
+                                upCount++;
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClick >= 2000) {
+                                            if (grades.containsKey(upCount)) {
+                                                if (upCount == 1) {
+                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
+                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                } else {
+                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμούς";
+                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                }
+                                            } else {
+                                                sentenceToSay = "Αύξηση θερμοκρασίας κατά " + upCount + " βαθμούς";
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                            }
+                                            upCount = 0;
+                                        }
+
+                                    }
+                                }, 2000);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
         findViewById(R.id.onoff).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -113,6 +217,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     public void onInit(int status) {
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
+                            TTS.setPitch((float) 0.8);
                             TTS.setLanguage(localeToUse);
                             if (!on) {
                                 ImageButton onOff = findViewById(R.id.onoff);
@@ -188,7 +293,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (!sleepOn) {
                                     sentenceToSay = "Η λειτουργία ύπνου ενεργοποιήθηκε";
                                     sleepOn = true;
-                                }else{
+                                } else {
                                     sentenceToSay = "Η λειτουργία ύπνου απενεργοποιήθηκε";
                                     sleepOn = false;
                                 }
