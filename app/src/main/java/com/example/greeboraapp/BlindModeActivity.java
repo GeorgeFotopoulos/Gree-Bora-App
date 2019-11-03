@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     ObjectAnimator textColorAnim;
     TextToSpeech TTS;
