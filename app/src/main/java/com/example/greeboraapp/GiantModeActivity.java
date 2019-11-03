@@ -111,7 +111,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     public void onInit(int status) {
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
-                            TTS.setPitch((float) 0.8);
+                            TTS.setPitch((float) 0.9);
                             TTS.setLanguage(localeToUse);
                             firstClick = System.currentTimeMillis();
                             if (on) {
@@ -120,7 +120,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 h.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClick >= 2000) {
+                                        if (System.currentTimeMillis() - firstClick >= 1000) {
                                             if (grades.containsKey(upCount)) {
                                                 if (upCount == 1) {
                                                     sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
@@ -137,7 +137,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                         }
 
                                     }
-                                }, 2000);
+                                }, 1000);
                             }
                         }
                     }
@@ -153,7 +153,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     public void onInit(int status) {
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
-                            TTS.setPitch((float) 0.8);
+                            TTS.setPitch((float) 0.9);
                             TTS.setLanguage(localeToUse);
                             firstClick = System.currentTimeMillis();
                             if (on) {
@@ -162,7 +162,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 h.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClick >= 2000) {
+                                        if (System.currentTimeMillis() - firstClick >= 1000) {
                                             if (grades.containsKey(upCount)) {
                                                 if (upCount == 1) {
                                                     sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
@@ -179,7 +179,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                         }
 
                                     }
-                                }, 2000);
+                                }, 1000);
                             }
                         }
                     }
