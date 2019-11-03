@@ -32,7 +32,9 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     boolean hideMoreOptions = false;
     boolean on = false;
     int upCount = 0;
-    long firstClick = 0;
+    int downCount = 0;
+    long firstClickUp = 0;
+    long firstClickDown = 0;
     boolean sleepOn = false;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<>();
@@ -113,27 +115,27 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setPitch((float) 0.9);
                             TTS.setLanguage(localeToUse);
-                            firstClick = System.currentTimeMillis();
+                            firstClickDown = System.currentTimeMillis();
                             if (on) {
-                                upCount++;
+                                firstClickDown = System.currentTimeMillis();
+                                downCount++;
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
-                                    @Override
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClick >= 1000) {
-                                            if (grades.containsKey(upCount)) {
-                                                if (upCount == 1) {
-                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
+                                        if (System.currentTimeMillis() - firstClickDown >= 1000) {
+                                            if (grades.containsKey(downCount)) {
+                                                if (downCount == 1) {
+                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 } else {
-                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμούς";
+                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμούς";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 }
                                             } else {
-                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + upCount + " βαθμούς";
+                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + downCount + " βαθμούς";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                             }
-                                            upCount = 0;
+                                            downCount = 0;
                                         }
 
                                     }
@@ -155,14 +157,14 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setPitch((float) 0.9);
                             TTS.setLanguage(localeToUse);
-                            firstClick = System.currentTimeMillis();
+
                             if (on) {
+                                firstClickUp = System.currentTimeMillis();
                                 upCount++;
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
-                                    @Override
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClick >= 1000) {
+                                        if (System.currentTimeMillis() - firstClickUp >= 1000) {
                                             if (grades.containsKey(upCount)) {
                                                 if (upCount == 1) {
                                                     sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
