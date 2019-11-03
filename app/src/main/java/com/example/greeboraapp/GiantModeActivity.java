@@ -5,13 +5,11 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.Voice;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,9 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -38,11 +34,10 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     int upCount = 0;
     long firstClick = 0;
     boolean sleepOn = false;
-    private TextView txvResult;
-    private GestureDetector gesture;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<Integer, String>();
-
+    private TextView txvResult;
+    private GestureDetector gesture;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -251,9 +246,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                 });
             }
-
-
         });
+
         findViewById(R.id.swing).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -271,7 +265,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                 });
             }
-
         });
 
         findViewById(R.id.sleep).setOnClickListener(new View.OnClickListener() {
@@ -298,8 +291,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                 });
             }
-
         });
+
         findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -318,8 +311,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                 });
             }
-
         });
+
         findViewById(R.id.temp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -338,8 +331,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                 });
             }
-
         });
+
         findViewById(R.id.clean).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -358,12 +351,10 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                 });
             }
-
         });
     }
 
     public void getSpeechInput(View view) {
-
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "el_GR");
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
@@ -385,7 +376,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     txvResult.setText(result.get(0));
                 }
-
                 break;
         }
     }
@@ -399,7 +389,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     private void onLeft() {
-
     }
 
     private void onRight() {

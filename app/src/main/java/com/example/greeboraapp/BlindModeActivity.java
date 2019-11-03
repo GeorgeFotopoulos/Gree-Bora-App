@@ -56,7 +56,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     public void getSpeechInput(View view) {
-
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "el_GR");
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
