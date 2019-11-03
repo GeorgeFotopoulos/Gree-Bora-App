@@ -29,7 +29,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         gesture = new GestureDetector(new SwipeGestureDetector());
         TextView txt = findViewById(R.id.swipeLeft);
 
-        textColorAnim = ObjectAnimator.ofInt(txt, "textColor", Color.BLACK, Color.TRANSPARENT);
+        textColorAnim = ObjectAnimator.ofInt(txt, "flicker", Color.BLACK, Color.TRANSPARENT);
         textColorAnim.setDuration(1000);
         textColorAnim.setEvaluator(new ArgbEvaluator());
         textColorAnim.setRepeatCount(ValueAnimator.INFINITE);

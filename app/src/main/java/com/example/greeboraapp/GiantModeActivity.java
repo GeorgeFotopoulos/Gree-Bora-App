@@ -74,53 +74,40 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         clean.setVisibility(View.GONE);
         final TextView hideShow = findViewById(R.id.options);
 
-        textColorAnim = ObjectAnimator.ofInt(hideShow, "textColor", Color.BLACK, Color.TRANSPARENT);
+        textColorAnim = ObjectAnimator.ofInt(hideShow, "flicker", Color.BLACK, Color.TRANSPARENT);
         textColorAnim.setDuration(1000);
         textColorAnim.setEvaluator(new ArgbEvaluator());
         textColorAnim.setRepeatCount(ValueAnimator.INFINITE);
         textColorAnim.setRepeatMode(ValueAnimator.REVERSE);
         textColorAnim.start();
 
-        findViewById(R.id.options).setOnClickListener(new View.OnClickListener() {
-
+        findViewById(R.id.onoff).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setPitch((float) 0.8);
+                            TTS.setLanguage(localeToUse);
+                            if (!on) {
+                                ImageButton onOff = findViewById(R.id.onoff);
+                                onOff.setImageResource(R.drawable.ic_on);
+                                sentenceToSay = "Ενεργοποίηση";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                on = true;
 
-                if (!hideMoreOptions) {
-                    hideShow.setText("︽");
-                    fan.setVisibility(View.VISIBLE);
-                    swing.setVisibility(View.VISIBLE);
-                    sleep.setVisibility(View.VISIBLE);
-                    timer.setVisibility(View.VISIBLE);
-                    temp.setVisibility(View.VISIBLE);
-                    clean.setVisibility(View.VISIBLE);
-
-                    final ScrollView sv = findViewById(R.id.scroll);
-                    sv.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            sv.fullScroll(View.FOCUS_DOWN);
+                            } else {
+                                ImageButton onOff = findViewById(R.id.onoff);
+                                onOff.setImageResource(R.drawable.ic_off);
+                                sentenceToSay = "Απενεργοποίηση";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                on = false;
+                            }
                         }
-                    });
-                    hideMoreOptions = true;
-                } else {
-                    hideShow.setText("︾");
-                    fan.setVisibility(View.GONE);
-                    swing.setVisibility(View.GONE);
-                    sleep.setVisibility(View.GONE);
-                    timer.setVisibility(View.GONE);
-                    temp.setVisibility(View.GONE);
-                    clean.setVisibility(View.GONE);
-
-                    hideMoreOptions = false;
-                    final ScrollView sv = findViewById(R.id.scroll);
-                    sv.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            sv.fullScroll(View.FOCUS_UP);
-                        }
-                    });
-                }
+                    }
+                });
             }
         });
 
@@ -208,34 +195,45 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
             }
         });
 
-        findViewById(R.id.onoff).setOnClickListener(new View.OnClickListener() {
-
+        findViewById(R.id.options).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int status) {
-                        if (status != TextToSpeech.ERROR) {
-                            Locale localeToUse = new Locale("el_GR");
-                            TTS.setPitch((float) 0.8);
-                            TTS.setLanguage(localeToUse);
-                            if (!on) {
-                                ImageButton onOff = findViewById(R.id.onoff);
-                                onOff.setImageResource(R.drawable.ic_on);
-                                sentenceToSay = "Ενεργοποίηση";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                on = true;
 
-                            } else {
-                                ImageButton onOff = findViewById(R.id.onoff);
-                                onOff.setImageResource(R.drawable.ic_off);
-                                sentenceToSay = "Απενεργοποίηση";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                on = false;
-                            }
+                if (!hideMoreOptions) {
+                    hideShow.setText("︽");
+                    fan.setVisibility(View.VISIBLE);
+                    swing.setVisibility(View.VISIBLE);
+                    sleep.setVisibility(View.VISIBLE);
+                    timer.setVisibility(View.VISIBLE);
+                    temp.setVisibility(View.VISIBLE);
+                    clean.setVisibility(View.VISIBLE);
+
+                    final ScrollView sv = findViewById(R.id.scroll);
+                    sv.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            sv.fullScroll(View.FOCUS_DOWN);
                         }
-                    }
-                });
+                    });
+                    hideMoreOptions = true;
+                } else {
+                    hideShow.setText("︾");
+                    fan.setVisibility(View.GONE);
+                    swing.setVisibility(View.GONE);
+                    sleep.setVisibility(View.GONE);
+                    timer.setVisibility(View.GONE);
+                    temp.setVisibility(View.GONE);
+                    clean.setVisibility(View.GONE);
+
+                    hideMoreOptions = false;
+                    final ScrollView sv = findViewById(R.id.scroll);
+                    sv.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            sv.fullScroll(View.FOCUS_UP);
+                        }
+                    });
+                }
             }
         });
 
