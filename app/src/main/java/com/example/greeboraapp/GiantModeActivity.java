@@ -35,8 +35,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     long firstClick = 0;
     boolean sleepOn = false;
     ObjectAnimator textColorAnim;
-    HashMap<Integer, String> grades = new HashMap<Integer, String>();
-    private TextView txvResult;
+    HashMap<Integer, String> grades = new HashMap<>();
+    private TextView command;
     private GestureDetector gesture;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -374,7 +374,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
             case 10:
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    txvResult.setText(result.get(0));
+                    command.setText(result.get(0));
                 }
                 break;
         }
