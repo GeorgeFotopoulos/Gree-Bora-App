@@ -35,11 +35,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     String sentenceToSay;
     boolean hideMoreOptions = false;
     boolean on = false;
-    boolean pressed = false;
     int upCount = 0;
     long firstClick = 0;
-    long differenceBetweenClicks = 0;
-    long toSpeak = 0;
     boolean sleepOn = false;
     private TextView txvResult;
     private GestureDetector gesture;
@@ -364,36 +361,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
         });
     }
-
-
-    //txvResult = (TextView) findViewById(R.id.txvResult);
-    //TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-    //    @Override
-    //    public void onInit(int status) {
-    //        if (status != TextToSpeech.ERROR) {
-    //            // replace this Locale with whatever you want
-    //            Locale localeToUse = new Locale("el_GR");
-    //            TTS.setLanguage(localeToUse);
-    //            sentenceToSay="Καλώς τον!";
-    //            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-    //        }
-    //        findViewById(R.id.SPEAK).setOnClickListener(new View.OnClickListener() {
-    //            public void onClick(View v) {
-    //                String toSpeak = ((EditText) findViewById(R.id.TextToSpeak)).getText().toString();
-    //                if(toSpeak.equals("")){
-    //                    sentenceToSay = "Αφού δεν με είδανε ρε παλιομαλάκα, δεν με είδανε!";
-    //                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-    //                    sentenceToSay = "Γράψε κάτι να πω ρε τρελέ!";
-    //                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-    //                }else {
-    //                    sentenceToSay = toSpeak;
-    //                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-    //                }
-    //            }
-    //        });
-
-    //    }
-    //});
 
     public void getSpeechInput(View view) {
 

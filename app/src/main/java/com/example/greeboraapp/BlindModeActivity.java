@@ -68,9 +68,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         }
     }
 
-    private void blink() {
-    }
-
     @Override
     public void onInit(int status) {
     }
