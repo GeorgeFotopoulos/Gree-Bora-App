@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,9 +14,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -43,12 +48,14 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     double countDown = 0;
     boolean hideMoreOptions = false;
     boolean on = false;
+    boolean stopped = false;
     int fanCount = 0;
     int swingCount = 0;
     int modeCount = 0;
+    int temperatureDif = 0;
+    int timeToSet = 0;
     long firstClickUp = 0;
     long firstClickDown = 0;
-    int temperatureDif = 0;
     boolean sleepOn = false;
     boolean timerOn = false;
     boolean cleanOn = false;
@@ -112,7 +119,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         gradeDisp.setVisibility(View.INVISIBLE);
         final TextView progressDisp = findViewById(R.id.txtProgress);
         progressDisp.setVisibility(View.INVISIBLE);
-
 
 
         final TextView hideShow = findViewById(R.id.options);
@@ -538,7 +544,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
         findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                     @Override
                     public void onInit(int status) {
@@ -549,25 +555,51 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             TTS.setPitch((float) 0.9);
                             if (on) {
                                 firstClickDown = System.currentTimeMillis();
+                                if (timeToSet + 15 <= 190) {
+                                    timeToSet = timeToSet + 15;
+                                } else {
+                                    timeToSet = 190;
+                                }
+                                final ObjectAnimator timeAnim;
+                                tempShow.setText(timeToSet + "");
+                                gradeDisp.setText("'");
+                                timeAnim = ObjectAnimator.ofInt(tempShow, "textColor", Color.TRANSPARENT, Color.BLACK);
+                                timeAnim.setDuration(600);
+                                timeAnim.setEvaluator(new ArgbEvaluator());
+                                timeAnim.setRepeatCount(ValueAnimator.INFINITE);
+                                timeAnim.setRepeatMode(ValueAnimator.REVERSE);
+                                timeAnim.start();
+
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
                                         final ProgressBar timer = findViewById(R.id.timerShow);
-                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        timeAnim.setDuration(0);
+                                        timeAnim.setRepeatCount(0);
+                                        if (System.currentTimeMillis() - firstClickDown >= 3050) {
                                             if (timerOn) {
                                                 sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
                                                 timer.setVisibility(View.INVISIBLE);
+                                                progressDisp.setVisibility(View.INVISIBLE);
                                                 timerOn = false;
                                             } else {
                                                 sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
-                                                timeStr = 60;
+                                                tempShow.setText(temperatureShowReal + "");
+                                                gradeDisp.setText("℃");
+                                                timeStr = timeToSet;
                                                 countDown = timeStr;
                                                 pStatus = 0;
+
                                                 //Loader Start
                                                 txtProgress = findViewById(R.id.txtProgress);
                                                 progressBar = findViewById(R.id.timerShow);
                                                 progressDisp.setVisibility(View.VISIBLE);
                                                 new Thread(new Runnable() {
+                                                    @Override
+                                                    public int hashCode() {
+                                                        return super.hashCode();
+                                                    }
+
                                                     @Override
                                                     public void run() {
                                                         while (pStatus <= 100) {
@@ -576,26 +608,40 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                                                 public void run() {
                                                                     progressBar.setProgress(pStatus);
                                                                     txtProgress.setText((int) countDown + "'");
+                                                                    if (!timerOn) {
+                                                                        stopped = true;
+                                                                        pStatus = 101;
+                                                                    }
                                                                 }
                                                             });
                                                             try {
-                                                                Thread.sleep(500);
+                                                                Thread.sleep(100);
                                                             } catch (InterruptedException e) {
                                                                 e.printStackTrace();
                                                             }
                                                             pStatus++;
                                                             countDown = countDown - timeStr / 100;
                                                         }
+                                                        if (!stopped) {
+                                                            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                                                            } else {
+                                                                //deprecated in API 26
+                                                                v.vibrate(500);
+                                                            }
+                                                        }
                                                     }
                                                 }).start();
                                                 //Loader End
+
                                                 timer.setVisibility(View.VISIBLE);
                                                 timerOn = true;
                                             }
                                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         }
                                     }
-                                }, 1000);
+                                }, 3100);
                             }
                         }
                     }
@@ -646,9 +692,9 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                     if (timerOn) {
                                         timerDisp.setVisibility(View.VISIBLE);
                                         if (sleepOn || cleanOn) {
-                                            extras = extras + ",και ο χρονοδιακόπτης έχει ρυθμιστεί για " + timeStr + " λεπτά";
+                                            extras = extras + "και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου" + (int) countDown + " λεπτά ακόμα";
                                         } else {
-                                            extras = ",ο χρονοδιακόπτης έχει ρυθμιστεί για " + timeStr + " λεπτά";
+                                            extras = "ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου" + (int) countDown + " λεπτά ακόμα";
                                         }
                                     }
                                     if (sleepOn || cleanOn || timerOn) {
@@ -709,6 +755,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
             }
         });
     }
+
 
     public void getSpeechInput(View view) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
