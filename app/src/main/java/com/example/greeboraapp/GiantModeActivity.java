@@ -39,7 +39,8 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     String modeStr = "Ψυχρή";
     String fanStr = "Αυτόματη";
     String swingStr = "Ολική";
-    int timeStr = 0;
+    double timeStr = 0;
+    double countDown = 0;
     boolean hideMoreOptions = false;
     boolean on = false;
     int fanCount = 0;
@@ -59,7 +60,10 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     private GestureDetector gesture;
     int temperature = 21;
     int temperatureShowReal = 21;
-
+    private TextView txtProgress;
+    private ProgressBar progressBar;
+    private int pStatus = 0;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +76,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         grades.put(14, "δεκατέσσερις");
         grades.put(23, "εικοσιτρείς");
         grades.put(24, "εικοσιτέσσερις");
+
 
         gesture = new GestureDetector(new GiantModeActivity.SwipeGestureDetector());
 
@@ -105,6 +110,9 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         sleepDisp.setVisibility(View.INVISIBLE);
         final TextView gradeDisp = findViewById(R.id.gradeShow);
         gradeDisp.setVisibility(View.INVISIBLE);
+        final TextView progressDisp = findViewById(R.id.txtProgress);
+        progressDisp.setVisibility(View.INVISIBLE);
+
 
 
         final TextView hideShow = findViewById(R.id.options);
@@ -143,7 +151,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                     cleanDisp.setVisibility(View.VISIBLE);
                                 }
                                 if (timerOn) {
-                                    timerDisp.setVisibility(View.VISIBLE);
+                                    timerOn = false;
                                 }
                             } else {
                                 ImageButton onOff = findViewById(R.id.onoff);
@@ -151,6 +159,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 sentenceToSay = "Απενεργοποίηση";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 on = false;
+                                progressDisp.setVisibility(View.INVISIBLE);
                                 tempShow.setVisibility(View.INVISIBLE);
                                 gradeDisp.setVisibility(View.INVISIBLE);
                                 mode.setVisibility(View.INVISIBLE);
@@ -552,6 +561,34 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                             } else {
                                                 sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
                                                 timeStr = 60;
+                                                countDown = timeStr;
+                                                pStatus = 0;
+                                                //Loader Start
+                                                txtProgress = findViewById(R.id.txtProgress);
+                                                progressBar = findViewById(R.id.timerShow);
+                                                progressDisp.setVisibility(View.VISIBLE);
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        while (pStatus <= 100) {
+                                                            handler.post(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    progressBar.setProgress(pStatus);
+                                                                    txtProgress.setText((int) countDown + "'");
+                                                                }
+                                                            });
+                                                            try {
+                                                                Thread.sleep(500);
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            pStatus++;
+                                                            countDown = countDown - timeStr / 100;
+                                                        }
+                                                    }
+                                                }).start();
+                                                //Loader End
                                                 timer.setVisibility(View.VISIBLE);
                                                 timerOn = true;
                                             }
