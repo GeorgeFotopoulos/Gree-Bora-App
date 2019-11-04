@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Λεξιλόγιο Χρήσης"
+        android:textSize="36sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbarSize="8sp">
+
+        <TextView
+            android:id="@+id/text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:gravity="start"
+            android:scrollbars="vertical"
+            android:text=" 1. Για την ενεργοποίηση του κλιματιστικού: Ενεργοποίηση ή Άνοιξε\n
+2. Για την απενεργοποίηση του κλιματιστικού: Απενεργοποίηση ή Κλείσε\n
+3. Για την αύξηση θερμοκρασίας: Αύξησε ή Πάνω και τον αριθμό των βαθμών.\n
+
+"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>
