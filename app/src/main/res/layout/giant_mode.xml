@@ -27,17 +27,32 @@
         <TextView
             android:id="@+id/tempShow"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="200dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:gravity="center"
-            android:text="21℃"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:text="21"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="#ED000000"
-            android:textSize="80sp"
+            android:textSize="130sp"
             app:layout_constraintEnd_toStartOf="@+id/modeShow"
             app:layout_constraintStart_toEndOf="@+id/fanShow"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/gradeShow"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="℃"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="#ED000000"
+            android:textSize="50sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tempShow"
+            app:layout_constraintEnd_toStartOf="@+id/modeShow"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -52,12 +67,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <ProgressBar
             android:id="@+id/timerShow"
             android:layout_width="0dp"
             android:layout_height="93dp"
+            android:max="100"
+            android:progress="50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tempShow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tempShow" />
+
+        <TextView
+            android:id="@+id/minuteShow"
+            android:layout_width="0dp"
+            android:layout_height="93dp"
             android:text="🕒"
-            android:visibility="invisible"
             android:textSize="65sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tempShow"
@@ -90,6 +115,7 @@
             android:layout_height="89dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
+            android:src="@drawable/moon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/swingShow"
             app:layout_constraintStart_toEndOf="@+id/cleanShow"
