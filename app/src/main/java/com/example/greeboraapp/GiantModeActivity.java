@@ -32,15 +32,15 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     String sentenceToSay;
     boolean hideMoreOptions = false;
     boolean on = false;
-    int upCount = 0;
-    int downCount = 0;
     int fanCount = 0;
     int swingCount = 0;
     int modeCount = 0;
     long firstClickUp = 0;
     long firstClickDown = 0;
+    int temperatureDif = 0;
     boolean sleepOn = false;
     boolean timerOn = false;
+    boolean cleanOn = false;
     final int MAX_TEMP = 30;
     final int MIN_TEMP = 16;
     ObjectAnimator textColorAnim;
@@ -49,7 +49,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     int temperature = 21;
     int temperatureShowReal = 21;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,10 +74,25 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         temp.setVisibility(View.GONE);
         final Button clean = findViewById(R.id.clean);
         clean.setVisibility(View.GONE);
+
+        final TextView tempShow = findViewById(R.id.tempShow);
+        tempShow.setVisibility(View.INVISIBLE);
+        final TextView mode = findViewById(R.id.modeShow);
+        mode.setVisibility(View.INVISIBLE);
+        final ImageView fanDisp = findViewById(R.id.fanShow);
+        fanDisp.setVisibility(View.INVISIBLE);
+        final ImageView swingDisp = findViewById(R.id.swingShow);
+        swingDisp.setVisibility(View.INVISIBLE);
+        final ImageView cleanDisp = findViewById(R.id.cleanShow);
+        cleanDisp.setVisibility(View.INVISIBLE);
+        final TextView timerDisp = findViewById(R.id.timerShow);
+        timerDisp.setVisibility(View.INVISIBLE);
+        final ImageView sleepDisp = findViewById(R.id.sleepShow);
+        timerDisp.setVisibility(View.INVISIBLE);
+
+
         final TextView hideShow = findViewById(R.id.options);
-
-
-        textColorAnim = ObjectAnimator.ofInt(hideShow, "flicker", Color.BLACK, Color.TRANSPARENT);
+        textColorAnim = ObjectAnimator.ofInt(hideShow, "textColor", Color.BLACK, Color.TRANSPARENT);
         textColorAnim.setDuration(1000);
         textColorAnim.setEvaluator(new ArgbEvaluator());
         textColorAnim.setRepeatCount(ValueAnimator.INFINITE);
@@ -100,13 +115,32 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 sentenceToSay = "Ενεργοποίηση";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 on = true;
-
+                                tempShow.setVisibility(View.VISIBLE);
+                                mode.setVisibility(View.VISIBLE);
+                                fanDisp.setVisibility(View.VISIBLE);
+                                swingDisp.setVisibility(View.VISIBLE);
+                                if (sleepOn) {
+                                    sleepDisp.setVisibility(View.VISIBLE);
+                                }
+                                if (cleanOn) {
+                                    cleanDisp.setVisibility(View.VISIBLE);
+                                }
+                                if (timerOn) {
+                                    timerDisp.setVisibility(View.VISIBLE);
+                                }
                             } else {
                                 ImageButton onOff = findViewById(R.id.onoff);
                                 onOff.setImageResource(R.drawable.ic_off);
                                 sentenceToSay = "Απενεργοποίηση";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 on = false;
+                                tempShow.setVisibility(View.INVISIBLE);
+                                mode.setVisibility(View.INVISIBLE);
+                                fanDisp.setVisibility(View.INVISIBLE);
+                                swingDisp.setVisibility(View.INVISIBLE);
+                                cleanDisp.setVisibility(View.INVISIBLE);
+                                timerDisp.setVisibility(View.INVISIBLE);
+                                sleepDisp.setVisibility(View.INVISIBLE);
                             }
                         }
                     }
@@ -126,38 +160,38 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             TTS.setLanguage(localeToUse);
                             if (on) {
                                 firstClickDown = System.currentTimeMillis();
-                                TextView tempShow = findViewById(R.id.tempShow);
-                                downCount++;
-                                if (temperature - downCount >= MIN_TEMP) {
-                                    temperatureShowReal = temperature - downCount;
-                                    tempShow.setText(temperatureShowReal +"℃");
+                                temperatureShowReal--;
+                                if (temperatureShowReal >= MIN_TEMP) {
+                                    tempShow.setText(temperatureShowReal + "℃");
+                                } else {
+                                    temperatureShowReal = MIN_TEMP;
+                                    tempShow.setText(temperatureShowReal + "℃");
                                 }
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
                                         if (System.currentTimeMillis() - firstClickDown >= 950) {
 
-                                            if (temperature - downCount >= MIN_TEMP) {
-
-                                                if (grades.containsKey(downCount)) {
-                                                    if (downCount == 1) {
-                                                        sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμό.";
+                                            if (temperatureShowReal > MIN_TEMP) {
+                                                temperatureDif = temperature - temperatureShowReal;
+                                                if (grades.containsKey(temperatureDif)) {
+                                                    if (temperatureDif == 1) {
+                                                        sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό.";
                                                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                     } else {
-                                                        sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(downCount) + " βαθμούς.";
+                                                        sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς.";
                                                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                     }
                                                 } else {
-                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + downCount + " βαθμούς.";
+                                                    sentenceToSay = "Μείωση θερμοκρασίας κατά " + temperatureDif + " βαθμούς.";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+
                                                 }
-                                                temperature = temperature - downCount;
-                                                downCount = 0;
+                                                temperature = temperatureShowReal;
                                             } else {
                                                 sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι 16 βαθμούς.";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 temperature = MIN_TEMP;
-                                                downCount = 0;
                                             }
                                         }
                                     }
@@ -182,11 +216,12 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
                             if (on) {
                                 firstClickUp = System.currentTimeMillis();
-                                TextView tempShow = findViewById(R.id.tempShow);
-                                upCount++;
-                                if (temperature + upCount <= MAX_TEMP) {
-                                    temperatureShowReal = temperature + upCount;
-                                    tempShow.setText(temperatureShowReal +"℃");
+                                temperatureShowReal++;
+                                if (temperatureShowReal <= MAX_TEMP) {
+                                    tempShow.setText(temperatureShowReal + "℃");
+                                } else {
+                                    temperatureShowReal = MAX_TEMP;
+                                    tempShow.setText(temperatureShowReal + "℃");
                                 }
 
                                 Handler h = new Handler();
@@ -194,27 +229,25 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                     public void run() {
                                         if (System.currentTimeMillis() - firstClickUp >= 950) {
 
-                                            if (temperature + upCount <= MAX_TEMP) {
-
-                                                if (grades.containsKey(upCount)) {
-                                                    if (upCount == 1) {
-                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμό";
+                                            if (temperatureShowReal < MAX_TEMP) {
+                                                temperatureDif = temperatureShowReal - temperature;
+                                                if (grades.containsKey(temperatureDif)) {
+                                                    if (temperatureDif == 1) {
+                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό";
                                                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                     } else {
-                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(upCount) + " βαθμούς";
+                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς";
                                                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                     }
                                                 } else {
-                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + upCount + " βαθμούς";
+                                                    sentenceToSay = "Αύξηση θερμοκρασίας κατά " + temperatureDif + " βαθμούς";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 }
-                                                temperature = temperature + upCount;
-                                                upCount = 0;
+                                                temperature = temperatureShowReal;
                                             } else {
                                                 sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι 30 βαθμούς.";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 temperature = MAX_TEMP;
-                                                upCount = 0;
                                             }
                                         }
 
@@ -243,7 +276,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (modeCount == 6) {
                                     modeCount = 1;
                                 }
-                                TextView mode = findViewById(R.id.modeShow);
+
                                 if (modeCount == 1) {
                                     mode.setText("❆");
                                 } else if (modeCount == 2) {
@@ -284,7 +317,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         findViewById(R.id.options).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (!hideMoreOptions) {
                     hideShow.setText("︽");
                     fan.setVisibility(View.VISIBLE);
@@ -339,15 +371,14 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (fanCount == 5) {
                                     fanCount = 1;
                                 }
-                                ImageView fan = findViewById(R.id.fanShow);
                                 if (fanCount == 1) {
-                                    fan.setImageResource(R.drawable.volume_low);
+                                    fanDisp.setImageResource(R.drawable.volume_low);
                                 } else if (fanCount == 2) {
-                                    fan.setImageResource(R.drawable.volume_mid);
+                                    fanDisp.setImageResource(R.drawable.volume_mid);
                                 } else if (fanCount == 3) {
-                                    fan.setImageResource(R.drawable.volume_full);
+                                    fanDisp.setImageResource(R.drawable.volume_full);
                                 } else {
-                                    fan.setImageResource(R.drawable.volume_auto);
+                                    fanDisp.setImageResource(R.drawable.volume_auto);
                                 }
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
@@ -384,20 +415,20 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-                                ImageView swing = findViewById(R.id.swingShow);
+
                                 firstClickDown = System.currentTimeMillis();
                                 swingCount++;
                                 if (swingCount == 5) {
                                     swingCount = 1;
                                 }
                                 if (swingCount == 1) {
-                                    swing.setImageResource(R.drawable.fan_swing_down);
+                                    swingDisp.setImageResource(R.drawable.fan_swing_down);
                                 } else if (swingCount == 2) {
-                                    swing.setImageResource(R.drawable.fan_swing_mid);
+                                    swingDisp.setImageResource(R.drawable.fan_swing_mid);
                                 } else if (swingCount == 3) {
-                                    swing.setImageResource(R.drawable.fan_swing_up);
+                                    swingDisp.setImageResource(R.drawable.fan_swing_up);
                                 } else {
-                                    swing.setImageResource(R.drawable.fan_swing_auto);
+                                    swingDisp.setImageResource(R.drawable.fan_swing_auto);
                                 }
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
@@ -441,15 +472,14 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                 h.postDelayed(new Runnable() {
                                     public void run() {
                                         if (System.currentTimeMillis() - firstClickDown >= 950) {
-                                            ImageView sleep = findViewById(R.id.sleepShow);
                                             if (sleepOn) {
                                                 sentenceToSay = "Η λειτουργία ύπνου απενεργοποιήθηκε.";
-                                                sleep.setVisibility(View.INVISIBLE);
+                                                sleepDisp.setVisibility(View.INVISIBLE);
                                                 sleepOn = false;
                                             } else {
                                                 sentenceToSay = "Η λειτουργία ύπνου ενεργοποιήθηκε.";
-                                                sleep.setVisibility(View.VISIBLE);
-                                                sleep.setImageResource(R.drawable.moon);
+                                                sleepDisp.setVisibility(View.VISIBLE);
+                                                sleepDisp.setImageResource(R.drawable.moon);
                                                 sleepOn = true;
                                             }
                                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
@@ -534,8 +564,25 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-                                sentenceToSay = "Η ένταση ρυθμίστηκε σε μεσαία";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                firstClickDown = System.currentTimeMillis();
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+
+                                            if (cleanOn) {
+                                                sentenceToSay = "Η λειτουργία καθαρισμού απενεργοποιήθηκε.";
+                                                cleanDisp.setVisibility(View.INVISIBLE);
+                                                cleanOn = false;
+                                            } else {
+                                                sentenceToSay = "Η λειτουργία καθαρισμού ενεργοποιήθηκε.";
+                                                cleanDisp.setVisibility(View.VISIBLE);
+                                                cleanOn = true;
+                                            }
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        }
+                                    }
+                                }, 1000);
                             }
                         }
                     }
