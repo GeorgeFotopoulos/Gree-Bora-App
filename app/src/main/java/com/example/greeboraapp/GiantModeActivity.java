@@ -810,7 +810,13 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         startActivity(myIntent);
         myIntent.putExtra("onOff", on);
-        myIntent.putExtra("temperature", temperature);
+        myIntent.putExtra("mode", modeStr);
+        myIntent.putExtra("swing", swingStr);
+        myIntent.putExtra("fan", fanStr);
+        myIntent.putExtra("sleep", sleepOn);
+        myIntent.putExtra("timer", timerOn);
+        myIntent.putExtra("clean", cleanOn);
+        myIntent.putExtra("temperature", temperatureShowReal);
     }
 
     @Override
