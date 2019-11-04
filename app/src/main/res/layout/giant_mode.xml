@@ -99,6 +99,7 @@
             android:layout_marginRight="8dp"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/timerShow"
             app:layout_constraintEnd_toStartOf="@+id/cleanShow"
             app:layout_constraintStart_toStartOf="@+id/timerShow"

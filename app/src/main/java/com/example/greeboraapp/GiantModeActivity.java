@@ -1,34 +1,25 @@
 package com.example.greeboraapp;
 
-import android.animation.Animator;
+
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,7 +28,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -234,6 +224,145 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                         }
                                     }
                                 }, 1000);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            // replace this Locale with whatever you want
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setLanguage(localeToUse);
+                            TTS.setPitch((float) 0.9);
+                            if (on) {
+                                firstClickDown = System.currentTimeMillis();
+                                if (!timerOn) {
+                                    if (timeToSet + 15 <= 190) {
+                                        timeToSet = timeToSet + 15;
+                                    } else {
+                                        timeToSet = 190;
+                                    }
+                                    tempShow.setText(timeToSet + "");
+                                    gradeDisp.setText("'");
+
+                                } else if(timerOn) {
+                                    checkIn = 1;
+                                }
+                                final ObjectAnimator timeAnim;
+                                timeAnim = ObjectAnimator.ofInt(tempShow, "textColor", Color.TRANSPARENT, Color.BLACK);
+                                if (timerOn) {
+                                    timeAnim.setDuration(0);
+                                    timeAnim.setRepeatCount(0);
+                                } else {
+                                    timeAnim.setDuration(600);
+                                    timeAnim.setRepeatCount(ValueAnimator.INFINITE);
+                                }
+                                timeAnim.setEvaluator(new ArgbEvaluator());
+                                timeAnim.setRepeatMode(ValueAnimator.REVERSE);
+                                timeAnim.start();
+
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        final ProgressBar timer = findViewById(R.id.timerShow);
+                                        timeAnim.setDuration(0);
+                                        timeAnim.setRepeatCount(0);
+                                        if (System.currentTimeMillis() - firstClickDown >= 3050) {
+                                            if (timerOn) {
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                                checkIn = 0;
+                                                stopped = false;
+                                                timer.setVisibility(View.INVISIBLE);
+                                                progressDisp.setVisibility(View.INVISIBLE);
+                                                timerOn = false;
+                                            } else {
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " λεπτά.";
+                                                timer.setVisibility(View.VISIBLE);
+                                                timerOn = true;
+                                                tempShow.setText(temperatureShowReal + "");
+                                                gradeDisp.setText("℃");
+                                                timeStr = timeToSet;
+                                                timeToSet = 0;
+                                                countDown = timeStr;
+                                                pStatus = 0;
+
+                                                //Loader Start
+                                                txtProgress = findViewById(R.id.txtProgress);
+                                                progressBar = findViewById(R.id.timerShow);
+                                                progressDisp.setVisibility(View.VISIBLE);
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        while (pStatus <= 100) {
+                                                            handler.post(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    progressBar.setProgress(pStatus);
+                                                                    txtProgress.setText((int) countDown + "'");
+                                                                    if (checkIn == 1) {
+                                                                        stopped = true;
+                                                                        pStatus = 101;
+                                                                    }
+                                                                }
+                                                            });
+                                                            try {
+                                                                Thread.sleep(100);
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            pStatus++;
+                                                            countDown = countDown - timeStr / 100;
+                                                        }
+                                                        mHandler.post(new Runnable() {
+                                                            public void run() {
+                                                                if (!stopped) {
+                                                                    final AlertDialog alertDialog = new AlertDialog.Builder(GiantModeActivity.this).create();
+                                                                    alertDialog.setTitle("Time's Up!");
+                                                                    alertDialog.setMessage("Το κλιματιστικό κλείνει.");
+                                                                    alertDialog.show();
+
+                                                                    TTS.speak("Το κλιματιστικό κλείνει.", TextToSpeech.QUEUE_ADD, null);
+
+                                                                    //wait
+                                                                    Handler handler = new Handler();
+                                                                    handler.postDelayed(new Runnable() {
+                                                                        public void run() {
+
+                                                                            if (hideMoreOptions) {
+                                                                                findViewById(R.id.options).performClick();
+                                                                                hideMoreOptions = false;
+                                                                            }
+                                                                            findViewById(R.id.onoff).performClick();
+                                                                            alertDialog.hide();
+                                                                        }
+                                                                    }, 3000);
+
+                                                                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                                                                    } else {
+                                                                        v.vibrate(500);
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }).start();
+                                                //Loader End
+                                            }
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        }
+                                    }
+                                }, 3100);
                             }
                         }
                     }
@@ -546,143 +675,6 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
             }
         });
 
-        findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int status) {
-                        if (status != TextToSpeech.ERROR) {
-                            // replace this Locale with whatever you want
-                            Locale localeToUse = new Locale("el_GR");
-                            TTS.setLanguage(localeToUse);
-                            TTS.setPitch((float) 0.9);
-                            if (on) {
-                                firstClickDown = System.currentTimeMillis();
-                                if (!timerOn) {
-                                    if (timeToSet + 15 <= 190) {
-                                        timeToSet = timeToSet + 15;
-                                    } else {
-                                        timeToSet = 190;
-                                    }
-                                    tempShow.setText(timeToSet + "");
-                                    gradeDisp.setText("'");
-
-                                } else if(timerOn) {
-                                    checkIn = 1;
-                                }
-                                final ObjectAnimator timeAnim;
-                                timeAnim = ObjectAnimator.ofInt(tempShow, "textColor", Color.TRANSPARENT, Color.BLACK);
-                                if (timerOn) {
-                                    timeAnim.setDuration(0);
-                                    timeAnim.setRepeatCount(0);
-                                } else {
-                                    timeAnim.setDuration(600);
-                                    timeAnim.setRepeatCount(ValueAnimator.INFINITE);
-                                }
-                                timeAnim.setEvaluator(new ArgbEvaluator());
-                                timeAnim.setRepeatMode(ValueAnimator.REVERSE);
-                                timeAnim.start();
-
-                                Handler h = new Handler();
-                                h.postDelayed(new Runnable() {
-                                    public void run() {
-                                        final ProgressBar timer = findViewById(R.id.timerShow);
-                                        timeAnim.setDuration(0);
-                                        timeAnim.setRepeatCount(0);
-                                        if (System.currentTimeMillis() - firstClickDown >= 3050) {
-                                            if (timerOn) {
-                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                                checkIn = 0;
-                                                timer.setVisibility(View.INVISIBLE);
-                                                progressDisp.setVisibility(View.INVISIBLE);
-                                                timerOn = false;
-                                            } else {
-                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " λεπτά.";
-                                                timer.setVisibility(View.VISIBLE);
-                                                timerOn = true;
-                                                tempShow.setText(temperatureShowReal + "");
-                                                gradeDisp.setText("℃");
-                                                timeStr = timeToSet;
-                                                timeToSet = 0;
-                                                countDown = timeStr;
-                                                pStatus = 0;
-
-                                                //Loader Start
-                                                txtProgress = findViewById(R.id.txtProgress);
-                                                progressBar = findViewById(R.id.timerShow);
-                                                progressDisp.setVisibility(View.VISIBLE);
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        while (pStatus <= 100) {
-                                                            handler.post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    progressBar.setProgress(pStatus);
-                                                                    txtProgress.setText((int) countDown + "'");
-                                                                    if (checkIn == 1) {
-                                                                        stopped = true;
-                                                                        pStatus = 101;
-                                                                    }
-                                                                }
-                                                            });
-                                                            try {
-                                                                Thread.sleep(60000);
-                                                            } catch (InterruptedException e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                            pStatus++;
-                                                            countDown = countDown - timeStr / 100;
-                                                        }
-                                                        mHandler.post(new Runnable() {
-                                                            public void run() {
-                                                                if (!stopped) {
-                                                                    final AlertDialog alertDialog = new AlertDialog.Builder(GiantModeActivity.this).create();
-                                                                    alertDialog.setTitle("Time's Up!");
-                                                                    alertDialog.setMessage("Το κλιματιστικό κλείνει.");
-                                                                    alertDialog.show();
-
-                                                                    TTS.speak("Το κλιματιστικό κλείνει.", TextToSpeech.QUEUE_ADD, null);
-
-                                                                    //wait
-                                                                    Handler handler = new Handler();
-                                                                    handler.postDelayed(new Runnable() {
-                                                                        public void run() {
-
-                                                                            if (hideMoreOptions) {
-                                                                                findViewById(R.id.options).performClick();
-                                                                                hideMoreOptions = false;
-                                                                            }
-                                                                            findViewById(R.id.onoff).performClick();
-                                                                            alertDialog.hide();
-                                                                        }
-                                                                    }, 3000);
-
-                                                                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                                                                    } else {
-                                                                        v.vibrate(500);
-                                                                    }
-
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                }).start();
-                                                //Loader End
-                                            }
-                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                        }
-                                    }
-                                }, 3100);
-                            }
-                        }
-                    }
-                });
-            }
-        });
 
         findViewById(R.id.temp).setOnClickListener(new View.OnClickListener() {
             @Override
