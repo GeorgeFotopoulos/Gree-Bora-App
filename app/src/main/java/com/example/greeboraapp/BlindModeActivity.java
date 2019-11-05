@@ -33,7 +33,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     ArrayList<String> grades = new ArrayList<>();
     List<String> uniques = Arrays.asList("μηδέν", "έναν", "ένα", "δύο", "τρεις", "τέσσερις", "πέντε", "έξι", "εφτά", "οκτώ",
             "οχτώ", "εννέα", "εννιά", "δέκα", "ένδεκα", "έντεκα", "δώδεκα", "δεκατρείς", "δεκατέσσερις", "δεκαπέντε");
-    int modeChoice = -1, swingChoice = -1, fanChoice = -1, currentTemp = 21, bonusModes = 0;
+    int modeChoice = -1, swingChoice = -1, fanChoice = -1, currentTemp = 21;
     boolean timer = false, sleep = false, ionization = false;
     private GestureDetector gesture;
 
@@ -92,30 +92,51 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         TTS.setPitch((float) 0.9);
                         TTS.setLanguage(localeToUse);
                     }
-                    // ενεργοποίηση κλιματιστικού
-                    if (command.get(0).toLowerCase().contains("ενεργοποίηση") || command.get(0).toLowerCase().contains("άνοιξε")) {
-                        if (!on) {
-                            sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            on = true;
+                    if (command.get(0).toLowerCase().contains("απενεργοποίηση") || command.get(0).toLowerCase().contains("κλείσε") || command.get(0).toLowerCase().contains("απενεργοποίησε")) {
+                        if (command.get(0).toLowerCase().contains("χρονοδιακόπτη") || (command.get(0).toLowerCase().contains("χρονοδιακόπτης"))) {
+                            if (on) {
+                                if (timer) {
+                                    timer = false;
+                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                } else {
+                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη απενεργοποιημένη.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                }
+                            }
                         } else {
-                            sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη σε λειτουργία.";
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            if (on) {
+                                sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                on = false;
+                            } else {
+                                sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
                         }
-                    }
-                    // απενεργοποίηση κλιματιστικού
-                    else if (command.get(0).toLowerCase().contains("απενεργοποίηση") || command.get(0).toLowerCase().contains("κλείσε")) {
-                        if (on) {
-                            sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            on = false;
+                    } else if (command.get(0).toLowerCase().contains("ενεργοποίηση") || command.get(0).toLowerCase().contains("άνοιξε") || command.get(0).toLowerCase().contains("ενεργοποίησε")) {
+                        if (command.get(0).toLowerCase().contains("χρονοδιακόπτη") || (command.get(0).toLowerCase().contains("χρονοδιακόπτης"))) {
+                            if (on) {
+                                if (!timer) {
+                                    timer = true;
+                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                } else {
+                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                }
+                            }
                         } else {
-                            sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            if (!on) {
+                                sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                on = true;
+                            } else {
+                                sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη σε λειτουργία.";
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            }
                         }
-                    }
-                    // αύξηση θερμοκρασίας
-                    else if (command.get(0).toLowerCase().contains("αύξησε") || command.get(0).toLowerCase().contains("ανέβασε") || command.get(0).toLowerCase().contains("αύξηση") || command.get(0).toLowerCase().contains("πάνω") || command.get(0).toLowerCase().contains("ανέβα")) {
+                    } else if (command.get(0).toLowerCase().contains("αύξησε") || command.get(0).toLowerCase().contains("ανέβασε") || command.get(0).toLowerCase().contains("αύξηση") || command.get(0).toLowerCase().contains("πάνω") || command.get(0).toLowerCase().contains("ανέβα")) {
                         ArrayList<String> st = new ArrayList<>();
                         int temp = 0;
                         String tempStr = "";
@@ -157,9 +178,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             }
                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                         }
-                    }
-                    // μείωση θερμοκρασίας
-                    else if (command.get(0).toLowerCase().contains("μείωσε") || command.get(0).toLowerCase().contains("κατέβασε") || command.get(0).toLowerCase().contains("μείωση") || command.get(0).toLowerCase().contains("κάτω") || command.get(0).toLowerCase().contains("κατέβα")) {
+                    } else if (command.get(0).toLowerCase().contains("μείωσε") || command.get(0).toLowerCase().contains("κατέβασε") || command.get(0).toLowerCase().contains("μείωση") || command.get(0).toLowerCase().contains("κάτω") || command.get(0).toLowerCase().contains("κατέβα")) {
                         ArrayList<String> st = new ArrayList<>();
                         int temp = 0;
                         String tempStr = "";
@@ -203,9 +222,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             }
                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                         }
-                    }
-                    // mode - λειτουργία
-                    else if (command.get(0).toLowerCase().contains("λειτουργία")) {
+                    } else if (command.get(0).toLowerCase().contains("λειτουργία")) {
                         if (on) {
                             if (command.get(0).toLowerCase().contains("αυτόματη")) {
                                 if (modeChoice != 0) {
@@ -247,7 +264,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     sentenceToSay = "Η λειτουργία ανεμιστήρα είναι ηδη ενεργή.";
                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 }
-                            } else if (command.get(0).toLowerCase().contains("θερμή")) {
+                            } else if (command.get(0).toLowerCase().contains("θερμή") || command.get(0).toLowerCase().contains("θέρμη")) {
                                 if (modeChoice != 4) {
                                     modeStr = "θερμή";
                                     sentenceToSay = "Θερμή λειτουργία ενεργή.";
@@ -259,9 +276,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                             }
                         }
-                    }
-                    // swing - ανάκλιση
-                    else if (command.get(0).toLowerCase().contains("ανάκλιση") || command.get(0).toLowerCase().contains("ανάκληση")) {
+                    } else if (command.get(0).toLowerCase().contains("ανάκλιση") || command.get(0).toLowerCase().contains("ανάκληση")) {
                         if (on) {
                             if (command.get(0).toLowerCase().contains("ολική")) {
                                 if (swingChoice != 0) {
@@ -305,9 +320,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                             }
                         }
-                    }
-                    // fan - ταχύτητα
-                    else if (command.get(0).toLowerCase().contains("ταχύτητα")) {
+                    } else if (command.get(0).toLowerCase().contains("ταχύτητα")) {
                         if (on) {
                             if (command.get(0).toLowerCase().contains("αυτόματη")) {
                                 if (fanChoice != 0) {
@@ -351,53 +364,19 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                             }
                         }
-                    }
-                    // timer - ενεργοποίηση χρονοδιακόπτη
-                    else if (command.get(0).toLowerCase().contains("χρονοδιακόπτη") || (command.get(0).toLowerCase().contains("χρονοδιακόπτης"))) {
-                        if (on) {
-                            if (!timer) {
-                                bonusModes++;
-                                timer = true;
-                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            } else {
-                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη βρίσκεται ήδη σε λειτουργία.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            }
-                        }
-                    }
-                    // timer off - απενεργοποίηση χρονοδιακόπτη
-                    else if (command.get(0).toLowerCase().contains("χρονοδιακόπτη") && (command.get(0).toLowerCase().contains("χρονοδιακόπτης"))) {
-                        if (on) {
-                            if (timer) {
-                                bonusModes--;
-                                timer = false;
-                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            } else {
-                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη βρίσκεται ήδη εκτός λειτουργίας.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            }
-                        }
-                    }
-                    // sleep - αδρανοποίηση
-                    else if (command.get(0).toLowerCase().contains("αδρανοποίηση")) {
+                    } else if (command.get(0).toLowerCase().contains("αδρανοποίηση")) {
                         if (on) {
                             if (!sleep) {
-                                bonusModes++;
                                 sleep = true;
                                 sentenceToSay = "Η λειτουργία αδρανοποίησης ενεργοποιήθηκε.";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                             } else {
-                                bonusModes--;
                                 sleep = false;
                                 sentenceToSay = "Η λειτουργία αδρανοποίησης απενεργοποιήθηκε.";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                             }
                         }
-                    }
-                    // temp - ενημέρωση
-                    else if (command.get(0).toLowerCase().contains("ενημέρωση")) {
+                    } else if (command.get(0).toLowerCase().contains("ενημέρωση")) {
                         if (on) {
                             if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
                                 sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
@@ -410,14 +389,14 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
                             }
                             if (ionization) {
-                                if (sleep){
+                                if (sleep) {
                                     sentenceToSay = "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές.";
                                 } else {
                                     sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
                                 }
                             }
-                            if(timer){
-                                if(!sleep && !ionization){
+                            if (timer) {
+                                if (!sleep && !ionization) {
                                     sentenceToSay = "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
                                 } else {
                                     sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
@@ -425,17 +404,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             }
                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                         }
-                    }
-                    // clean - ιονισμός
-                    else if (command.get(0).toLowerCase().contains("ιονισμός") || (command.get(0).toLowerCase().contains("καθαρισμός"))) {
+                    } else if (command.get(0).toLowerCase().contains("ιονισμός") || (command.get(0).toLowerCase().contains("καθαρισμός"))) {
                         if (on) {
                             if (!ionization) {
-                                bonusModes++;
                                 ionization = true;
                                 sentenceToSay = "Η λειτουργία ιονισμού ενεργοποιήθηκε.";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                             } else {
-                                bonusModes--;
                                 ionization = false;
                                 sentenceToSay = "Η λειτουργία ιονισμού απενεργοποιήθηκε.";
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
@@ -485,7 +460,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     public void onInit(int status) {
     }
 
-    // Private class for gestures
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_MIN_DISTANCE = 120;
         private static final int SWIPE_MAX_OFF_PATH = 200;
@@ -500,12 +474,10 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                 if (diffAbs > SWIPE_MAX_OFF_PATH)
                     return false;
 
-                // Right swipe
                 if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                     BlindModeActivity.this.onRight();
                 }
 
-                // Left swipe
                 if (diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                     BlindModeActivity.this.onLeft();
                 }
