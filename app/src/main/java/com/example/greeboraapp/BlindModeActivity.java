@@ -72,7 +72,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     private void readCommand() {
-
+        sentenceToSay="";
         if (command != null) {
             TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                 @Override
@@ -89,23 +89,19 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     if (timer) {
                                         timer = false;
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη απενεργοποιημένη.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 }
                             } else {
                                 if (on) {
                                     sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     on = false;
                                     break;
                                 } else {
                                     sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     break;
                                 }
                             }
@@ -115,23 +111,19 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     if (!timer) {
                                         timer = true;
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 }
                             } else {
                                 if (!on) {
                                     sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     on = true;
                                     break;
                                 } else {
                                     sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη σε λειτουργία.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     break;
                                 }
                             }
@@ -175,7 +167,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                         currentTemp += temp;
                                     }
                                 }
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 break;
                             }
                         } else if (command.get(j).toLowerCase().contains("μείωσε") || command.get(j).toLowerCase().contains("κατέβασε") || command.get(j).toLowerCase().contains("μείωση") || command.get(j).toLowerCase().contains("κατέβα")) {
@@ -220,7 +211,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                         currentTemp -= temp;
                                     }
                                 }
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 break;
                             }
                         } else if (command.get(j).toLowerCase().contains("λειτουργία")) {
@@ -229,60 +219,50 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     if (modeChoice != 0) {
                                         modeStr = "αυτόματη";
                                         sentenceToSay = "Αυτόματη λειτουργία ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         modeChoice = 0;
                                         break;
                                     } else {
                                         sentenceToSay = "Η αυτόματη λειτουργία είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("ψυχρή")) {
                                     if (modeChoice != 1) {
                                         modeStr = "ψυχρή";
                                         sentenceToSay = "Ψυχρή λειτουργία ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         modeChoice = 1;
                                         break;
                                     } else {
                                         sentenceToSay = "Η ψυχρή λειτουργία είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("αφύγρανση")) {
                                     if (modeChoice != 2) {
                                         modeStr = "αφύγρανσης";
                                         sentenceToSay = "Λειτουργία αφύγρανσης ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         modeChoice = 2;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία αφύγρανσης είναι ηδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("ανεμιστήρα")) {
                                     if (modeChoice != 3) {
                                         modeStr = "ανεμιστήρα";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         modeChoice = 3;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα είναι ηδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("θερμή")) {
                                     if (modeChoice != 4) {
                                         modeStr = "θερμή";
                                         sentenceToSay = "Θερμή λειτουργία ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         modeChoice = 4;
                                         break;
                                     } else {
                                         sentenceToSay = "Η θερμή λειτουργία είναι ηδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 }
@@ -293,48 +273,40 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     if (swingChoice != 0) {
                                         swingStr = "ολική";
                                         sentenceToSay = "Λειτουργία ολικής ανάκλισης ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         swingChoice = 0;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ολικής ανάκλισης είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("κάτω")) {
                                     if (swingChoice != 1) {
                                         swingStr = "κάτω";
                                         sentenceToSay = "Λειτουργία κάτω ανάκλισης ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         swingChoice = 1;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία κάτω ανάκλισης είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("μέση")) {
                                     if (swingChoice != 2) {
                                         swingStr = "μέση";
                                         sentenceToSay = "Λειτουργία μέσης ανάκλισης ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         swingChoice = 2;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία μέσης ανάκλισης είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("πάνω") || command.get(j).toLowerCase().contains("Πάνο")) {
                                     if (swingChoice != 3) {
                                         swingStr = "πάνω";
                                         sentenceToSay = "Λειτουργία πάνω ανάκλισης ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         swingChoice = 3;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία πάνω ανάκλισης είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 }
@@ -345,48 +317,40 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     if (fanChoice != 0) {
                                         fanStr = "αυτόματη";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         fanChoice = 0;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("χαμηλή")) {
                                     if (fanChoice != 1) {
                                         fanStr = "χαμηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         fanChoice = 1;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("μεσαία")) {
                                     if (fanChoice != 2) {
                                         fanStr = "μεσαία";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε μεσαία ταχύτητα ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         fanChoice = 2;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε μεσαία ταχύτητα είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 } else if (command.get(j).toLowerCase().contains("υψηλή")) {
                                     if (fanChoice != 3) {
                                         fanStr = "υψηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε υψηλή ταχύτητα ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         fanChoice = 3;
                                         break;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε υψηλή ταχύτητα είναι ήδη ενεργή.";
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         break;
                                     }
                                 }
@@ -396,12 +360,10 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (!sleep) {
                                     sleep = true;
                                     sentenceToSay = "Η λειτουργία αδρανοποίησης ενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     break;
                                 } else {
                                     sleep = false;
                                     sentenceToSay = "Η λειτουργία αδρανοποίησης απενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     break;
                                 }
                             }
@@ -409,29 +371,26 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             if (on) {
                                 if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
                                     sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 } else {
                                     sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 }
                                 if (sleep) {
-                                    sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
+                                    sentenceToSay += "Η λειτουργία ύπνου είναι ενεργή..";
                                 }
                                 if (ionization) {
                                     if (sleep) {
-                                        sentenceToSay = "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές.";
+                                        sentenceToSay += "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές..";
                                     } else {
-                                        sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
+                                        sentenceToSay += "Η λειτουργία ιονισμού είναι ενεργή..";
                                     }
                                 }
                                 if (timer) {
                                     if (!sleep && !ionization) {
-                                        sentenceToSay = "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
+                                        sentenceToSay += "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα..";
                                     } else {
-                                        sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
+                                        sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα..";
                                     }
                                 }
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 break;
                             }
                         } else if (command.get(j).toLowerCase().contains("ιονισμός") || (command.get(j).toLowerCase().contains("καθαρισμός"))) {
@@ -439,17 +398,17 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (!ionization) {
                                     ionization = true;
                                     sentenceToSay = "Η λειτουργία ιονισμού ενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     break;
                                 } else {
                                     ionization = false;
                                     sentenceToSay = "Η λειτουργία ιονισμού απενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     break;
                                 }
                             }
                         }
+
                     }
+                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                 }
             });
         }
