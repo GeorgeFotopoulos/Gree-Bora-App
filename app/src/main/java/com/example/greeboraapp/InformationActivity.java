@@ -15,9 +15,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-
+import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Locale;
+import android.text.Html;
+import android.text.Spanned;
 
 public class InformationActivity extends AppCompatActivity {
     TextToSpeech TTS;
@@ -28,6 +30,8 @@ public class InformationActivity extends AppCompatActivity {
     boolean soundOn = false;
     int animateSound = 0;
     private Handler handler = new Handler();
+
+    TextView text_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,21 @@ public class InformationActivity extends AppCompatActivity {
                 });
             }
         });
+
+
+        text_view = findViewById(R.id.text_view);
+        text_view.setText((Html.fromHtml("<p>1. Για την ενεργοποίηση του κλιματιστικού: <b>Ενεργοποίηση</b> ή <b>Άνοιξε</b>.</p>"
+        + "<p>2. Για την απενεργοποίηση του κλιματιστικού: <b>Απενεργοποίηση'</b> ή <b>Κλείσε</b>.</p>"
+        + "<p>3. Για την αύξηση θερμοκρασίας: <b>Αύξησε</b> ή <b>Πάνω</b> ή <b>Ανέβα</b> ή <b>Ανέβασε</b> και τον αριθμό των βαθμών.</p>"
+        + "<p>4. Για την μείωση θερμοκρασίας: <b>Μείωσε</b> ή <b>Κάτω</b> ή <b>Κατέβα</b> ή <b>Κατέβασε</b> και τον αριθμό των βαθμών.</p>"
+        + "<p>5. Για αλλαγή της λειτουργίας: <b>Λειτουργία</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Αυτόματη</b> ή <b>Ψυχρή</b> ή <b>Αφύγρανση</b> ή <b>Ανεμιστήρας</b> ή <b>Θερμή</b>.</p>"
+        + "<p>6. Για αλλαγή της ανάκλισης: <b>Ανάκλιση</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Πάνω</b> ή <b>Μέση</b> ή <b>Κάτω</b> ή <b>Ολική</b>.</p>"
+        + "<p>7. Για αλλαγή της ταχύτητας: <b>Ταχύτητα</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Αυτόματη</b> ή <b>Χαμηλή</b> ή <b>Μεσαία</b> ή <b>Υψηλή</b>.</p>"
+        + "<p>8. Για ενεργοποίηση χρονοδιακόπτη: <b>Ενεργοποίηση Χρονοδιακόπτη</b> ή <b>Άνοιξε Χρονοδιακόπτη</b> ακολουθούμενη από τα λεπτά που επιθυμεί ο χρήστης να είναι σε λειτουργία το κλιματιστικό.</p>"
+        + "<p>9. Για την απενεργοποίηση του χρονοδιακόπτη: <b>Απενεργοποίηση Χρονοδιακόπτη</b> ή <b>Κλείσε Χρονοδιακόπτη</b>'.</p>"
+        + "<p>10. Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης: <b>Αδρανοποίηση</b>.</p>"
+        + "<p>11. Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού: <b>Ενημέρωση</b>.</p>"
+        + "<p>12. Για ενεργοποίηση ή απενεργοποίηση ιονισμού: <b>Ιονισμός</b> ή <b>Καθαρισμός</b>.</p>")));
     }
 
     @Override
