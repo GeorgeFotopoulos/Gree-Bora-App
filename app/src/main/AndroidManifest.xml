@@ -12,7 +12,7 @@
         <activity android:name=".InformationActivity"
             android:label="Λεξιλόγιο Χρήσης">
         </activity>
-        <activity android:name=".GiantModeActivity"
+        <activity android:name=".ButtonModeActivity"
                     android:label="Button Mode"
                     android:screenOrientation="portrait"></activity>
         <activity android:name=".BlindModeActivity">

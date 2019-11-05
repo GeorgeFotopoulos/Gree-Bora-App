@@ -2,25 +2,21 @@ package com.example.greeboraapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 
 public class InformationActivity extends AppCompatActivity {
     TextToSpeech TTS;
     ArrayList<TextToSpeech> TTSs = new ArrayList<>();
     String sentenceToSay;
-    long firstClickDown = 0;
-    boolean speak = false;
+    boolean firstTime = true;
     private GestureDetector gesture;
 
     @Override
@@ -29,9 +25,7 @@ public class InformationActivity extends AppCompatActivity {
         setContentView(R.layout.information);
         gesture = new GestureDetector(new InformationActivity.SwipeGestureDetector());
 
-        final ImageButton noteDisp = findViewById(R.id.note);
-        noteDisp.setVisibility(View.VISIBLE);
-
+        findViewById(R.id.note).setVisibility(View.VISIBLE);
 
         findViewById(R.id.note).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,32 +39,31 @@ public class InformationActivity extends AppCompatActivity {
                             TTS.setPitch((float) 0.9);
 
                             sentenceToSay = "Για την ενεργοποίηση του κλιματιστικού πείτε: 'Ενεργοποίηση', ή 'Άνοιξε'..."
-                                    //+ "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
-                                    //+ "Για την αύξηση θερμοκρασίας πείτε: 'Αύξησε', ή 'Πάνω', και τον αριθμό των βαθμών..."
-                                    //+ "Για την μείωση θερμοκρασίας πείτε: 'Μείωσε', ή 'Κάτω', και τον αριθμό των βαθμών..."
-                                    //+ "Για αλλαγή της λειτουργίας πείτε: 'Λειτουργία', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Ψυχρή', 'Αφύγρανση', 'Ανεμιστήρας', ή 'Θερμή'..."
-                                    //+ "Για αλλαγή της ανάκλισης πείτε: 'Ανάκλιση', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Πάνω', 'Μέση', 'Κάτω', ή 'Ολική'..."
-                                    //+ "Για αλλαγή της ταχύτητας πείτε: 'Ταχύτητα', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Χαμηλή', 'Μεσαία', ή 'Υψηλή'..."
-                                    //+ "Για ενεργοποίηση χρονοδιακόπτη πείτε: 'Ενεργοποίηση Χρονοδιακόπτη', ή 'Άνοιξε Χρονοδιακόπτη', ακολουθούμενη από τα λεπτά που επιθυμείτε να είναι σε λειτουργία το κλιματιστικό..."
-                                    //+ "Για την απενεργοποίηση του χρονοδιακόπτη πείτε: 'Απενεργοποίηση Χρονοδιακόπτη', ή 'Κλείσε Χρονοδιακόπτη'..."
-                                    //+ "Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης πείτε: 'Αδρανοποίηση'..."
+                                    + "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
+                                    + "Για την αύξηση θερμοκρασίας πείτε: 'Αύξησε', ή 'Πάνω', και τον αριθμό των βαθμών..."
+                                    + "Για την μείωση θερμοκρασίας πείτε: 'Μείωσε', ή 'Κάτω', και τον αριθμό των βαθμών..."
+                                    + "Για αλλαγή της λειτουργίας πείτε: 'Λειτουργία', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Ψυχρή', 'Αφύγρανση', 'Ανεμιστήρας', ή 'Θερμή'..."
+                                    + "Για αλλαγή της ανάκλισης πείτε: 'Ανάκλιση', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Πάνω', 'Μέση', 'Κάτω', ή 'Ολική'..."
+                                    + "Για αλλαγή της ταχύτητας πείτε: 'Ταχύτητα', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Χαμηλή', 'Μεσαία', ή 'Υψηλή'..."
+                                    + "Για ενεργοποίηση χρονοδιακόπτη πείτε: 'Ενεργοποίηση Χρονοδιακόπτη', ή 'Άνοιξε Χρονοδιακόπτη', ακολουθούμενη από τα λεπτά που επιθυμείτε να είναι σε λειτουργία το κλιματιστικό..."
+                                    + "Για την απενεργοποίηση του χρονοδιακόπτη πείτε: 'Απενεργοποίηση Χρονοδιακόπτη', ή 'Κλείσε Χρονοδιακόπτη'..."
+                                    + "Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης πείτε: 'Αδρανοποίηση'..."
                                     + "Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού πείτε: 'Ενημέρωση'..."
                                     + "Για ενεργοποίηση ή απενεργοποίηση ιονισμού πείτε: 'Ιονισμός', ή 'Καθαρισμός'...";
 
-                            firstClickDown = System.currentTimeMillis();
-                            Handler h = new Handler();
-                            h.postDelayed(new Runnable() {
-                                public void run() {
-                                    if (System.currentTimeMillis() - firstClickDown >= 950) {
-                                        if (!TTS.isSpeaking()) {
-                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                            TTSs.add(TTS);
-                                        } else {
-                                            onStopTalking();
-                                        }
-                                    }
+                            if (firstTime) {
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                TTSs.add(TTS);
+                                firstTime = false;
+                            } else {
+                                if (!TTS.isSpeaking()) {
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    TTSs.add(TTS);
+                                } else {
+                                    onStopTalking();
                                 }
-                            }, 1000);
+
+                            }
                         }
                     }
                 });
@@ -86,22 +79,29 @@ public class InformationActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-
     private void onLeft() {
+        onStopTalking();
         finish();
         Intent myIntent = new Intent(InformationActivity.this, BlindModeActivity.class);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity(myIntent);
     }
 
-
     private void onStopTalking() {
         for (int i = 0; i < TTSs.size(); i++) {
-            TTSs.get(i).stop();
-            TTSs.get(i).shutdown();
+            if (TTSs.get(i).isSpeaking()) {
+                TTSs.get(i).stop();
+                TTSs.get(i).shutdown();
+            }
         }
     }
 
+    @Override
+    public void onPause(){
+        onStopTalking();
+        super.onPause();
+        this.finish();
+    }
 
     // Private class for gestures
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {

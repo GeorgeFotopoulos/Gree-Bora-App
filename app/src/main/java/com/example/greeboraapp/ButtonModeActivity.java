@@ -31,7 +31,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class GiantModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class ButtonModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     TextToSpeech TTS;
     String sentenceToSay;
     String modeStr = "Ψυχρή";
@@ -69,7 +69,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.giant_mode);
+        setContentView(R.layout.button_mode);
         grades.put(1, "έναν");
         grades.put(3, "τρεις");
         grades.put(4, "τέσσερις");
@@ -79,7 +79,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
         grades.put(24, "εικοσιτέσσερις");
         final Handler mHandler = new Handler();
 
-        gesture = new GestureDetector(new GiantModeActivity.SwipeGestureDetector());
+        gesture = new GestureDetector(new ButtonModeActivity.SwipeGestureDetector());
 
         final Button fan = findViewById(R.id.fan);
         fan.setVisibility(View.GONE);
@@ -353,7 +353,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                                                         mHandler.post(new Runnable() {
                                                             public void run() {
                                                                 if (!stopped) {
-                                                                    final AlertDialog alertDialog = new AlertDialog.Builder(GiantModeActivity.this).create();
+                                                                    final AlertDialog alertDialog = new AlertDialog.Builder(ButtonModeActivity.this).create();
                                                                     alertDialog.setTitle("Time's Up!");
                                                                     alertDialog.setMessage("Το κλιματιστικό κλείνει.");
                                                                     alertDialog.show();
@@ -843,7 +843,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
 
     private void onRight() {
         finish();
-        Intent myIntent = new Intent(GiantModeActivity.this, BlindModeActivity.class);
+        Intent myIntent = new Intent(ButtonModeActivity.this, BlindModeActivity.class);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         startActivity(myIntent);
         myIntent.putExtra("onOff", on);
@@ -876,7 +876,7 @@ public class GiantModeActivity extends AppCompatActivity implements TextToSpeech
                     return false;
 
                 if (-diff > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    GiantModeActivity.this.onRight();
+                    ButtonModeActivity.this.onRight();
                 }
             } catch (Exception e) {
                 Log.e("", "Error on gestures");
