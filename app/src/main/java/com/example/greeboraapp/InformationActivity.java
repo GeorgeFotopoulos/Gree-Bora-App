@@ -1,13 +1,20 @@
 package com.example.greeboraapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -18,6 +25,9 @@ public class InformationActivity extends AppCompatActivity {
     String sentenceToSay;
     boolean firstTime = true;
     private GestureDetector gesture;
+    boolean soundOn = false;
+    int animateSound = 0;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +35,7 @@ public class InformationActivity extends AppCompatActivity {
         setContentView(R.layout.information);
         gesture = new GestureDetector(new InformationActivity.SwipeGestureDetector());
 
-        findViewById(R.id.note).setVisibility(View.VISIBLE);
+        final ImageButton sound = findViewById(R.id.note);
 
         findViewById(R.id.note).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,7 +47,41 @@ public class InformationActivity extends AppCompatActivity {
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
-
+                            if (soundOn) {
+                                soundOn = false;
+                                sound.setImageResource(R.drawable.ic_sound_off);
+                            } else {
+                                soundOn = true;
+                            }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    animateSound = 0;
+                                    while (soundOn) {
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if(animateSound == 0){
+                                                    sound.setImageResource(R.drawable.ic_sound_on_1);
+                                                }else if(animateSound == 1){
+                                                    sound.setImageResource(R.drawable.ic_sound_on_2);
+                                                }else{
+                                                    sound.setImageResource(R.drawable.ic_sound_on);
+                                                }
+                                            }
+                                        });
+                                        try {
+                                            Thread.sleep(1000);
+                                            animateSound++;
+                                            if(animateSound == 3){
+                                                animateSound = 0;
+                                            }
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }).start();
                             sentenceToSay = "Για την ενεργοποίηση του κλιματιστικού πείτε: 'Ενεργοποίηση', ή 'Άνοιξε'..."
                                     + "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
                                     + "Για την αύξηση θερμοκρασίας πείτε: 'Αύξησε', ή 'Πάνω', και τον αριθμό των βαθμών..."

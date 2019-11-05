@@ -16,7 +16,7 @@
         android:layout_marginRight="32dp"
         android:background="#FFFFFF"
         android:gravity="center|center_vertical"
-        android:src="@drawable/ic_note"
+        android:src="@drawable/ic_sound_off"
         app:layout_constraintBottom_toTopOf="@+id/scrollView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
