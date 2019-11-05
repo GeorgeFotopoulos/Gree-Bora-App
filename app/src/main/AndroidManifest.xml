@@ -13,8 +13,9 @@
             android:label="Λεξιλόγιο Χρήσης">
         </activity>
         <activity android:name=".ButtonModeActivity"
-                    android:label="Button Mode"
-                    android:screenOrientation="portrait"></activity>
+            android:label="Button Mode"
+            android:screenOrientation="portrait">
+        </activity>
         <activity android:name=".BlindModeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -62,7 +62,6 @@ public class InformationActivity extends AppCompatActivity {
                                 } else {
                                     onStopTalking();
                                 }
-
                             }
                         }
                     }
@@ -97,7 +96,7 @@ public class InformationActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         onStopTalking();
         super.onPause();
         this.finish();
