@@ -136,7 +136,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                             }
                         }
-                    } else if (command.get(0).toLowerCase().contains("αύξησε") || command.get(0).toLowerCase().contains("ανέβασε") || command.get(0).toLowerCase().contains("αύξηση") || command.get(0).toLowerCase().contains("πάνω") || command.get(0).toLowerCase().contains("ανέβα")) {
+                    } else if (command.get(0).toLowerCase().contains("αύξησε") || command.get(0).toLowerCase().contains("ανέβασε") || command.get(0).toLowerCase().contains("αύξηση") || command.get(0).toLowerCase().contains("ανέβα")) {
                         ArrayList<String> st = new ArrayList<>();
                         int temp = 0;
                         String tempStr = "";
@@ -178,7 +178,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             }
                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                         }
-                    } else if (command.get(0).toLowerCase().contains("μείωσε") || command.get(0).toLowerCase().contains("κατέβασε") || command.get(0).toLowerCase().contains("μείωση") || command.get(0).toLowerCase().contains("κάτω") || command.get(0).toLowerCase().contains("κατέβα")) {
+                    } else if (command.get(0).toLowerCase().contains("μείωσε") || command.get(0).toLowerCase().contains("κατέβασε") || command.get(0).toLowerCase().contains("μείωση") || command.get(0).toLowerCase().contains("κατέβα")) {
                         ArrayList<String> st = new ArrayList<>();
                         int temp = 0;
                         String tempStr = "";
