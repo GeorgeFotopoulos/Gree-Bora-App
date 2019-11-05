@@ -71,17 +71,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         swipeRightAnim.start();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case 10:
-                if (resultCode == RESULT_OK && data != null) {
-                    command = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                }
-                break;
-        }
+    private void readCommand() {
 
         if (command != null) {
             TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -92,334 +82,390 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         TTS.setPitch((float) 0.9);
                         TTS.setLanguage(localeToUse);
                     }
-                    if (command.get(0).toLowerCase().contains("απενεργοποίηση") || command.get(0).toLowerCase().contains("κλείσε") || command.get(0).toLowerCase().contains("απενεργοποίησε")) {
-                        if (command.get(0).toLowerCase().contains("χρονοδιακόπτη") || (command.get(0).toLowerCase().contains("χρονοδιακόπτης"))) {
-                            if (on) {
-                                if (timer) {
-                                    timer = false;
-                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                } else {
-                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη απενεργοποιημένη.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            }
-                        } else {
-                            if (on) {
-                                sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                on = false;
-                            } else {
-                                sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            }
-                        }
-                    } else if (command.get(0).toLowerCase().contains("ενεργοποίηση") || command.get(0).toLowerCase().contains("άνοιξε") || command.get(0).toLowerCase().contains("ενεργοποίησε")) {
-                        if (command.get(0).toLowerCase().contains("χρονοδιακόπτη") || (command.get(0).toLowerCase().contains("χρονοδιακόπτης"))) {
-                            if (on) {
-                                if (!timer) {
-                                    timer = true;
-                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                } else {
-                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            }
-                        } else {
-                            if (!on) {
-                                sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                on = true;
-                            } else {
-                                sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη σε λειτουργία.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            }
-                        }
-                    } else if (command.get(0).toLowerCase().contains("αύξησε") || command.get(0).toLowerCase().contains("ανέβασε") || command.get(0).toLowerCase().contains("αύξηση") || command.get(0).toLowerCase().contains("ανέβα")) {
-                        ArrayList<String> st = new ArrayList<>();
-                        int temp = 0;
-                        String tempStr = "";
-                        for (int i = 0; i < command.get(0).split(" ").length; i++) {
-                            st.add(command.get(0).split(" ")[i]);
-                        }
-                        for (int i = 0; i < st.size(); i++) {
-                            try {
-                                temp = Integer.parseInt(st.get(i));
-                                break;
-                            } catch (Exception e) {
-                            }
-                            if (grades.contains(st.get(i))) {
-                                tempStr = grades.get(i);
-                                break;
-                            }
-                        }
-                        if (on) {
-                            if (!tempStr.equals("")) {
-                                if (tempStr.equalsIgnoreCase("μηδέν")) {
-                                    sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                } else if (tempStr.equalsIgnoreCase("ένα") || tempStr.equalsIgnoreCase("έναν")) {
-                                    sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + tempStr + " βαθμό Κελσίου.";
-                                    currentTemp += 1;
-                                } else {
-                                    sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + tempStr + " βαθμούς Κελσίου.";
-                                    currentTemp += Integer.parseInt(tempStr);
-                                }
-                            } else {
-                                if (temp == 0) {
-                                    sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                } else if (temp == 1) {
-                                    sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + temp + " βαθμό Κελσίου.";
-                                    currentTemp += temp;
-                                } else {
-                                    sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + temp + " βαθμούς Κελσίου.";
-                                    currentTemp += temp;
-                                }
-                            }
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                        }
-                    } else if (command.get(0).toLowerCase().contains("μείωσε") || command.get(0).toLowerCase().contains("κατέβασε") || command.get(0).toLowerCase().contains("μείωση") || command.get(0).toLowerCase().contains("κατέβα")) {
-                        ArrayList<String> st = new ArrayList<>();
-                        int temp = 0;
-                        String tempStr = "";
-                        for (int i = 0; i < command.get(0).split(" ").length; i++) {
-                            st.add(command.get(0).split(" ")[i]);
-                        }
-                        for (int i = 0; i < st.size(); i++) {
-                            try {
-                                temp = Integer.parseInt(st.get(i));
-                                break;
-                            } catch (Exception e) {
-                            }
-                            if (grades.contains(st.get(i))) {
-                                tempStr = grades.get(i);
-                                break;
-                            }
-                        }
-                        if (on) {
-                            if (!tempStr.equals("")) {
-                                if (tempStr.equalsIgnoreCase("μηδέν")) {
-                                    sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                } else if (tempStr.equalsIgnoreCase("ένα") || tempStr.equalsIgnoreCase("έναν")) {
-                                    sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + tempStr + " βαθμό Κελσίου.";
-                                    currentTemp -= 1;
-                                } else {
-                                    if (unique.containsKey(tempStr)) {
-                                        currentTemp -= unique.get(tempStr);
+                    for (int j = 0; j < command.size(); j++) {
+                        if (command.get(j).toLowerCase().contains("απενεργοποίηση") || command.get(j).toLowerCase().contains("κλείσε") || command.get(j).toLowerCase().contains("απενεργοποίησε")) {
+                            if (command.get(j).toLowerCase().contains("χρονοδιακόπτη") || (command.get(j).toLowerCase().contains("χρονοδιακόπτης"))) {
+                                if (on) {
+                                    if (timer) {
+                                        timer = false;
+                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη απενεργοποιημένη.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
                                     }
-                                    sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + tempStr + " βαθμούς Κελσίου.";
                                 }
                             } else {
-                                if (temp == 0) {
-                                    sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                } else if (temp == 1) {
-                                    sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμό Κελσίου.";
-                                    currentTemp -= temp;
+                                if (on) {
+                                    sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    on = false;
+                                    break;
                                 } else {
-                                    sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμούς Κελσίου.";
-                                    currentTemp -= temp;
+                                    sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    break;
                                 }
                             }
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                        }
-                    } else if (command.get(0).toLowerCase().contains("λειτουργία")) {
-                        if (on) {
-                            if (command.get(0).toLowerCase().contains("αυτόματη")) {
-                                if (modeChoice != 0) {
-                                    modeStr = "αυτόματη";
-                                    sentenceToSay = "Αυτόματη λειτουργία ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    modeChoice = 0;
-                                } else {
-                                    sentenceToSay = "Η αυτόματη λειτουργία είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                        } else if (command.get(j).toLowerCase().contains("ενεργοποίηση") || command.get(j).toLowerCase().contains("άνοιξε") || command.get(j).toLowerCase().contains("ενεργοποίησε")) {
+                            if (command.get(j).toLowerCase().contains("χρονοδιακόπτη") || (command.get(j).toLowerCase().contains("χρονοδιακόπτης"))) {
+                                if (on) {
+                                    if (!timer) {
+                                        timer = true;
+                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
                                 }
-                            } else if (command.get(0).toLowerCase().contains("ψυχρή")) {
-                                if (modeChoice != 1) {
-                                    modeStr = "ψυχρή";
-                                    sentenceToSay = "Ψυχρή λειτουργία ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    modeChoice = 1;
-                                } else {
-                                    sentenceToSay = "Η ψυχρή λειτουργία είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("αφύγρανση")) {
-                                if (modeChoice != 2) {
-                                    modeStr = "αφύγρανσης";
-                                    sentenceToSay = "Λειτουργία αφύγρανσης ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    modeChoice = 2;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία αφύγρανσης είναι ηδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("ανεμιστήρα")) {
-                                if (modeChoice != 3) {
-                                    modeStr = "ανεμιστήρα";
-                                    sentenceToSay = "Λειτουργία ανεμιστήρα ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    modeChoice = 3;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ανεμιστήρα είναι ηδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("θερμή") || command.get(0).toLowerCase().contains("θέρμη")) {
-                                if (modeChoice != 4) {
-                                    modeStr = "θερμή";
-                                    sentenceToSay = "Θερμή λειτουργία ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    modeChoice = 4;
-                                } else {
-                                    sentenceToSay = "Η θερμή λειτουργία είναι ηδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            }
-                        }
-                    } else if (command.get(0).toLowerCase().contains("ανάκλιση") || command.get(0).toLowerCase().contains("ανάκληση")) {
-                        if (on) {
-                            if (command.get(0).toLowerCase().contains("ολική")) {
-                                if (swingChoice != 0) {
-                                    swingStr = "ολική";
-                                    sentenceToSay = "Λειτουργία ολικής ανάκλισης ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    swingChoice = 0;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ολικής ανάκλισης είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("κάτω")) {
-                                if (swingChoice != 1) {
-                                    swingStr = "κάτω";
-                                    sentenceToSay = "Λειτουργία κάτω ανάκλισης ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    swingChoice = 1;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία κάτω ανάκλισης είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("μέση")) {
-                                if (swingChoice != 2) {
-                                    swingStr = "μέση";
-                                    sentenceToSay = "Λειτουργία μέσης ανάκλισης ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    swingChoice = 2;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία μέσης ανάκλισης είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("πάνω")) {
-                                if (swingChoice != 3) {
-                                    swingStr = "πάνω";
-                                    sentenceToSay = "Λειτουργία πάνω ανάκλισης ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    swingChoice = 3;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία πάνω ανάκλισης είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            }
-                        }
-                    } else if (command.get(0).toLowerCase().contains("ταχύτητα")) {
-                        if (on) {
-                            if (command.get(0).toLowerCase().contains("αυτόματη")) {
-                                if (fanChoice != 0) {
-                                    fanStr = "αυτόματη";
-                                    sentenceToSay = "Λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    fanChoice = 0;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("χαμηλή")) {
-                                if (fanChoice != 1) {
-                                    fanStr = "χαμηλή";
-                                    sentenceToSay = "Λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    fanChoice = 1;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("μεσαία")) {
-                                if (fanChoice != 2) {
-                                    fanStr = "μεσαία";
-                                    sentenceToSay = "Λειτουργία ανεμιστήρα σε μεσαία ταχύτητα ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    fanChoice = 2;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ανεμιστήρα σε μεσαία ταχύτητα είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            } else if (command.get(0).toLowerCase().contains("υψηλή")) {
-                                if (fanChoice != 3) {
-                                    fanStr = "υψηλή";
-                                    sentenceToSay = "Λειτουργία ανεμιστήρα σε υψηλή ταχύτητα ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    fanChoice = 3;
-                                } else {
-                                    sentenceToSay = "Η λειτουργία ανεμιστήρα σε υψηλή ταχύτητα είναι ήδη ενεργή.";
-                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                }
-                            }
-                        }
-                    } else if (command.get(0).toLowerCase().contains("αδρανοποίηση")) {
-                        if (on) {
-                            if (!sleep) {
-                                sleep = true;
-                                sentenceToSay = "Η λειτουργία αδρανοποίησης ενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                             } else {
-                                sleep = false;
-                                sentenceToSay = "Η λειτουργία αδρανοποίησης απενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                if (!on) {
+                                    sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    on = true;
+                                    break;
+                                } else {
+                                    sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη σε λειτουργία.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    break;
+                                }
                             }
-                        }
-                    } else if (command.get(0).toLowerCase().contains("ενημέρωση")) {
-                        if (on) {
-                            if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
-                                sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            } else {
-                                sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                        } else if (command.get(j).toLowerCase().contains("αύξησε") || command.get(j).toLowerCase().contains("ανέβασε") || command.get(j).toLowerCase().contains("αύξηση") || command.get(j).toLowerCase().contains("ανέβα")) {
+                            ArrayList<String> st = new ArrayList<>();
+                            int temp = 0;
+                            String tempStr = "";
+                            for (int i = 0; i < command.get(j).split(" ").length; i++) {
+                                st.add(command.get(j).split(" ")[i]);
                             }
-                            if (sleep) {
-                                sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
+                            for (int i = 0; i < st.size(); i++) {
+                                try {
+                                    temp = Integer.parseInt(st.get(i));
+                                    break;
+                                } catch (Exception e) {
+                                }
+                                if (grades.contains(st.get(i))) {
+                                    tempStr = grades.get(i);
+                                    break;
+                                }
                             }
-                            if (ionization) {
+                            if (on) {
+                                if (!tempStr.equals("")) {
+                                    if (tempStr.equalsIgnoreCase("μηδέν")) {
+                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
+                                    } else if (tempStr.equalsIgnoreCase("ένα") || tempStr.equalsIgnoreCase("έναν")) {
+                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + tempStr + " βαθμό Κελσίου.";
+                                        currentTemp += 1;
+                                    } else {
+                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + tempStr + " βαθμούς Κελσίου.";
+                                        currentTemp += Integer.parseInt(tempStr);
+                                    }
+                                } else {
+                                    if (temp == 0) {
+                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
+                                    } else if (temp == 1) {
+                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + temp + " βαθμό Κελσίου.";
+                                        currentTemp += temp;
+                                    } else {
+                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + temp + " βαθμούς Κελσίου.";
+                                        currentTemp += temp;
+                                    }
+                                }
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                break;
+                            }
+                        } else if (command.get(j).toLowerCase().contains("μείωσε") || command.get(j).toLowerCase().contains("κατέβασε") || command.get(j).toLowerCase().contains("μείωση") || command.get(j).toLowerCase().contains("κατέβα")) {
+                            ArrayList<String> st = new ArrayList<>();
+                            int temp = 0;
+                            String tempStr = "";
+                            for (int i = 0; i < command.get(j).split(" ").length; i++) {
+                                st.add(command.get(j).split(" ")[i]);
+                            }
+                            for (int i = 0; i < st.size(); i++) {
+                                try {
+                                    temp = Integer.parseInt(st.get(i));
+                                    break;
+                                } catch (Exception e) {
+                                }
+                                if (grades.contains(st.get(i))) {
+                                    tempStr = grades.get(i);
+                                    break;
+                                }
+                            }
+                            if (on) {
+                                if (!tempStr.equals("")) {
+                                    if (tempStr.equalsIgnoreCase("μηδέν")) {
+                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
+                                    } else if (tempStr.equalsIgnoreCase("ένα") || tempStr.equalsIgnoreCase("έναν")) {
+                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + tempStr + " βαθμό Κελσίου.";
+                                        currentTemp -= 1;
+                                    } else {
+                                        if (unique.containsKey(tempStr)) {
+                                            currentTemp -= unique.get(tempStr);
+                                        }
+                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + tempStr + " βαθμούς Κελσίου.";
+                                    }
+                                } else {
+                                    if (temp == 0) {
+                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
+                                    } else if (temp == 1) {
+                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμό Κελσίου.";
+                                        currentTemp -= temp;
+                                    } else {
+                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμούς Κελσίου.";
+                                        currentTemp -= temp;
+                                    }
+                                }
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                break;
+                            }
+                        } else if (command.get(j).toLowerCase().contains("λειτουργία")) {
+                            if (on) {
+                                if (command.get(j).toLowerCase().contains("αυτόματη")) {
+                                    if (modeChoice != 0) {
+                                        modeStr = "αυτόματη";
+                                        sentenceToSay = "Αυτόματη λειτουργία ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        modeChoice = 0;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η αυτόματη λειτουργία είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("ψυχρή")) {
+                                    if (modeChoice != 1) {
+                                        modeStr = "ψυχρή";
+                                        sentenceToSay = "Ψυχρή λειτουργία ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        modeChoice = 1;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η ψυχρή λειτουργία είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("αφύγρανση")) {
+                                    if (modeChoice != 2) {
+                                        modeStr = "αφύγρανσης";
+                                        sentenceToSay = "Λειτουργία αφύγρανσης ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        modeChoice = 2;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία αφύγρανσης είναι ηδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("ανεμιστήρα")) {
+                                    if (modeChoice != 3) {
+                                        modeStr = "ανεμιστήρα";
+                                        sentenceToSay = "Λειτουργία ανεμιστήρα ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        modeChoice = 3;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ανεμιστήρα είναι ηδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("θερμή")) {
+                                    if (modeChoice != 4) {
+                                        modeStr = "θερμή";
+                                        sentenceToSay = "Θερμή λειτουργία ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        modeChoice = 4;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η θερμή λειτουργία είναι ηδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (command.get(j).toLowerCase().contains("ανάκλιση")) {
+                            if (on) {
+                                if (command.get(j).toLowerCase().contains("ολική")) {
+                                    if (swingChoice != 0) {
+                                        swingStr = "ολική";
+                                        sentenceToSay = "Λειτουργία ολικής ανάκλισης ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        swingChoice = 0;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ολικής ανάκλισης είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("κάτω")) {
+                                    if (swingChoice != 1) {
+                                        swingStr = "κάτω";
+                                        sentenceToSay = "Λειτουργία κάτω ανάκλισης ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        swingChoice = 1;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία κάτω ανάκλισης είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("μέση")) {
+                                    if (swingChoice != 2) {
+                                        swingStr = "μέση";
+                                        sentenceToSay = "Λειτουργία μέσης ανάκλισης ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        swingChoice = 2;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία μέσης ανάκλισης είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("πάνω") || command.get(j).toLowerCase().contains("Πάνο")) {
+                                    if (swingChoice != 3) {
+                                        swingStr = "πάνω";
+                                        sentenceToSay = "Λειτουργία πάνω ανάκλισης ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        swingChoice = 3;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία πάνω ανάκλισης είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (command.get(j).toLowerCase().contains("ταχύτητα")) {
+                            if (on) {
+                                if (command.get(j).toLowerCase().contains("αυτόματη")) {
+                                    if (fanChoice != 0) {
+                                        fanStr = "αυτόματη";
+                                        sentenceToSay = "Λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        fanChoice = 0;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("χαμηλή")) {
+                                    if (fanChoice != 1) {
+                                        fanStr = "χαμηλή";
+                                        sentenceToSay = "Λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        fanChoice = 1;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("μεσαία")) {
+                                    if (fanChoice != 2) {
+                                        fanStr = "μεσαία";
+                                        sentenceToSay = "Λειτουργία ανεμιστήρα σε μεσαία ταχύτητα ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        fanChoice = 2;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ανεμιστήρα σε μεσαία ταχύτητα είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                } else if (command.get(j).toLowerCase().contains("υψηλή")) {
+                                    if (fanChoice != 3) {
+                                        fanStr = "υψηλή";
+                                        sentenceToSay = "Λειτουργία ανεμιστήρα σε υψηλή ταχύτητα ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        fanChoice = 3;
+                                        break;
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ανεμιστήρα σε υψηλή ταχύτητα είναι ήδη ενεργή.";
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (command.get(j).toLowerCase().contains("αδρανοποίηση")) {
+                            if (on) {
+                                if (!sleep) {
+                                    sleep = true;
+                                    sentenceToSay = "Η λειτουργία αδρανοποίησης ενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    break;
+                                } else {
+                                    sleep = false;
+                                    sentenceToSay = "Η λειτουργία αδρανοποίησης απενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    break;
+                                }
+                            }
+                        } else if (command.get(j).toLowerCase().contains("ενημέρωση")) {
+                            if (on) {
+                                if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
+                                    sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                } else {
+                                    sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                }
                                 if (sleep) {
-                                    sentenceToSay = "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές.";
-                                } else {
                                     sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
                                 }
-                            }
-                            if (timer) {
-                                if (!sleep && !ionization) {
-                                    sentenceToSay = "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
-                                } else {
-                                    sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
+                                if (ionization) {
+                                    if (sleep) {
+                                        sentenceToSay = "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές.";
+                                    } else {
+                                        sentenceToSay = "Η λειτουργία ύπνου είναι ενεργή.";
+                                    }
                                 }
+                                if (timer) {
+                                    if (!sleep && !ionization) {
+                                        sentenceToSay = "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
+                                    } else {
+                                        sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα";
+                                    }
+                                }
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                break;
                             }
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                        }
-                    } else if (command.get(0).toLowerCase().contains("ιονισμός") || (command.get(0).toLowerCase().contains("καθαρισμός"))) {
-                        if (on) {
-                            if (!ionization) {
-                                ionization = true;
-                                sentenceToSay = "Η λειτουργία ιονισμού ενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            } else {
-                                ionization = false;
-                                sentenceToSay = "Η λειτουργία ιονισμού απενεργοποιήθηκε.";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                        } else if (command.get(j).toLowerCase().contains("ιονισμός") || (command.get(j).toLowerCase().contains("καθαρισμός"))) {
+                            if (on) {
+                                if (!ionization) {
+                                    ionization = true;
+                                    sentenceToSay = "Η λειτουργία ιονισμού ενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    break;
+                                } else {
+                                    ionization = false;
+                                    sentenceToSay = "Η λειτουργία ιονισμού απενεργοποιήθηκε.";
+                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             });
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 10:
+                if (resultCode == RESULT_OK && data != null) {
+                    command = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                }
+                break;
+        }
+        readCommand();
     }
 
     @Override
