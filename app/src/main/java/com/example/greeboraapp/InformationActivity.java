@@ -2,6 +2,7 @@ package com.example.greeboraapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,11 +11,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class InformationActivity extends AppCompatActivity {
     TextToSpeech TTS;
+    ArrayList<TextToSpeech> TTSs = new ArrayList<>();
     String sentenceToSay;
+    long firstClickDown = 0;
     boolean speak = false;
     private GestureDetector gesture;
 
@@ -52,12 +57,20 @@ public class InformationActivity extends AppCompatActivity {
                                     //+ "Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού πείτε: 'Ενημέρωση'..."
                                     + "Για ενεργοποίηση ή απενεργοποίηση ιονισμού πείτε: 'Ιονισμός', ή 'Καθαρισμός'...";
 
-                            if (!TTS.isSpeaking()) {
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            } else {
-                                TTS.stop();
-                                TTS.shutdown();
-                            }
+                            firstClickDown = System.currentTimeMillis();
+                            Handler h = new Handler();
+                            h.postDelayed(new Runnable() {
+                                public void run() {
+                                    if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        if (!TTS.isSpeaking()) {
+                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                            TTSs.add(TTS);
+                                        } else {
+                                            onStopTalking();
+                                        }
+                                    }
+                                }
+                            }, 1000);
                         }
                     }
                 });
@@ -81,32 +94,14 @@ public class InformationActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
-    //@Override
-    //protected void onStop() {
-    //    super.onStop();
-    //    if (TTS != null) {
-    //        TTS.shutdown();
-    //    }
-    //}
 
-    //@Override
-    //public void onBackPressed() {
-    //    super.onBackPressed();
-    //    if (TTS != null) {
-    //        TTS.stop();
-    //        TTS.shutdown();
-    //    }
-    //    super.onDestroy();
-    //}
+    private void onStopTalking() {
+        for (int i = 0; i < TTSs.size(); i++) {
+            TTSs.get(i).stop();
+            TTSs.get(i).shutdown();
+        }
+    }
 
-    //@Override
-    //public void onDestroy() {
-    //    if (TTS != null) {
-    //        TTS.stop();
-    //        TTS.shutdown();
-    //    }
-    //    super.onDestroy();
-    //}
 
     // Private class for gestures
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
