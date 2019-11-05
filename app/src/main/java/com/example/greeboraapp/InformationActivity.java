@@ -2,7 +2,6 @@ package com.example.greeboraapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +15,7 @@ import java.util.Locale;
 public class InformationActivity extends AppCompatActivity {
     TextToSpeech TTS;
     String sentenceToSay;
-    long firstClickDown = 0;
+    boolean speak = false;
     private GestureDetector gesture;
 
     @Override
@@ -41,28 +40,24 @@ public class InformationActivity extends AppCompatActivity {
                             TTS.setPitch((float) 0.9);
 
                             sentenceToSay = "Για την ενεργοποίηση του κλιματιστικού πείτε: 'Ενεργοποίηση', ή 'Άνοιξε'..."
-                                    + "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
-                                    + "Για την αύξηση θερμοκρασίας πείτε: 'Αύξησε', ή 'Πάνω', και τον αριθμό των βαθμών..."
-                                    + "Για την μείωση θερμοκρασίας πείτε: 'Μείωσε', ή 'Κάτω', και τον αριθμό των βαθμών..."
-                                    + "Για αλλαγή της λειτουργίας πείτε: 'Λειτουργία', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Ψυχρή', 'Αφύγρανση', 'Ανεμιστήρας', ή 'Θερμή'..."
-                                    + "Για αλλαγή της ανάκλισης πείτε: 'Ανάκλιση', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Πάνω', 'Μέση', 'Κάτω', ή 'Ολική'..."
-                                    + "Για αλλαγή της ταχύτητας πείτε: 'Ταχύτητα', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Χαμηλή', 'Μεσαία', ή 'Υψηλή'..."
-                                    + "Για ενεργοποίηση χρονοδιακόπτη πείτε: 'Ενεργοποίηση Χρονοδιακόπτη', ή 'Άνοιξε Χρονοδιακόπτη', ακολουθούμενη από τα λεπτά που επιθυμείτε να είναι σε λειτουργία το κλιματιστικό..."
-                                    + "Για την απενεργοποίηση του χρονοδιακόπτη πείτε: 'Απενεργοποίηση Χρονοδιακόπτη', ή 'Κλείσε Χρονοδιακόπτη'..."
-                                    + "Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης πείτε: 'Αδρανοποίηση'..."
-                                    + "Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού πείτε: 'Ενημέρωση'..."
+                                    //+ "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
+                                    //+ "Για την αύξηση θερμοκρασίας πείτε: 'Αύξησε', ή 'Πάνω', και τον αριθμό των βαθμών..."
+                                    //+ "Για την μείωση θερμοκρασίας πείτε: 'Μείωσε', ή 'Κάτω', και τον αριθμό των βαθμών..."
+                                    //+ "Για αλλαγή της λειτουργίας πείτε: 'Λειτουργία', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Ψυχρή', 'Αφύγρανση', 'Ανεμιστήρας', ή 'Θερμή'..."
+                                    //+ "Για αλλαγή της ανάκλισης πείτε: 'Ανάκλιση', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Πάνω', 'Μέση', 'Κάτω', ή 'Ολική'..."
+                                    //+ "Για αλλαγή της ταχύτητας πείτε: 'Ταχύτητα', ακολουθούμενη από μια εκ των παρακάτω λέξεων.. 'Αυτόματη', 'Χαμηλή', 'Μεσαία', ή 'Υψηλή'..."
+                                    //+ "Για ενεργοποίηση χρονοδιακόπτη πείτε: 'Ενεργοποίηση Χρονοδιακόπτη', ή 'Άνοιξε Χρονοδιακόπτη', ακολουθούμενη από τα λεπτά που επιθυμείτε να είναι σε λειτουργία το κλιματιστικό..."
+                                    //+ "Για την απενεργοποίηση του χρονοδιακόπτη πείτε: 'Απενεργοποίηση Χρονοδιακόπτη', ή 'Κλείσε Χρονοδιακόπτη'..."
+                                    //+ "Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης πείτε: 'Αδρανοποίηση'..."
+                                    //+ "Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού πείτε: 'Ενημέρωση'..."
                                     + "Για ενεργοποίηση ή απενεργοποίηση ιονισμού πείτε: 'Ιονισμός', ή 'Καθαρισμός'...";
 
-                            firstClickDown = System.currentTimeMillis();
-                            Handler h = new Handler();
-                            h.postDelayed(new Runnable() {
-                                public void run() {
-                                    if (System.currentTimeMillis() - firstClickDown >= 950) {
-                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                    }
-                                }
-                            }, 1000);
-
+                            if (!TTS.isSpeaking()) {
+                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                            } else {
+                                TTS.stop();
+                                TTS.shutdown();
+                            }
                         }
                     }
                 });
@@ -85,6 +80,33 @@ public class InformationActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity(myIntent);
     }
+
+    //@Override
+    //protected void onStop() {
+    //    super.onStop();
+    //    if (TTS != null) {
+    //        TTS.shutdown();
+    //    }
+    //}
+
+    //@Override
+    //public void onBackPressed() {
+    //    super.onBackPressed();
+    //    if (TTS != null) {
+    //        TTS.stop();
+    //        TTS.shutdown();
+    //    }
+    //    super.onDestroy();
+    //}
+
+    //@Override
+    //public void onDestroy() {
+    //    if (TTS != null) {
+    //        TTS.stop();
+    //        TTS.shutdown();
+    //    }
+    //    super.onDestroy();
+    //}
 
     // Private class for gestures
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
