@@ -1,37 +1,31 @@
 package com.example.greeboraapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Locale;
-import android.text.Html;
-import android.text.Spanned;
 
 public class InformationActivity extends AppCompatActivity {
     TextToSpeech TTS;
     ArrayList<TextToSpeech> TTSs = new ArrayList<>();
     String sentenceToSay;
     boolean firstTime = true;
-    private GestureDetector gesture;
     boolean soundOn = false;
     int animateSound = 0;
-    private Handler handler = new Handler();
-
     TextView text_view;
+    private GestureDetector gesture;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +59,11 @@ public class InformationActivity extends AppCompatActivity {
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                if(animateSound == 0){
+                                                if (animateSound == 0) {
                                                     sound.setImageResource(R.drawable.ic_sound_on_1);
-                                                }else if(animateSound == 1){
+                                                } else if (animateSound == 1) {
                                                     sound.setImageResource(R.drawable.ic_sound_on_2);
-                                                }else{
+                                                } else {
                                                     sound.setImageResource(R.drawable.ic_sound_on);
                                                 }
                                             }
@@ -77,7 +71,7 @@ public class InformationActivity extends AppCompatActivity {
                                         try {
                                             Thread.sleep(1000);
                                             animateSound++;
-                                            if(animateSound == 3){
+                                            if (animateSound == 3) {
                                                 animateSound = 0;
                                             }
                                         } catch (InterruptedException e) {
@@ -120,17 +114,17 @@ public class InformationActivity extends AppCompatActivity {
 
         text_view = findViewById(R.id.text_view);
         text_view.setText((Html.fromHtml("<p>1. Για την ενεργοποίηση του κλιματιστικού: <b>Ενεργοποίηση</b> ή <b>Άνοιξε</b>.</p>"
-        + "<p>2. Για την απενεργοποίηση του κλιματιστικού: <b>Απενεργοποίηση'</b> ή <b>Κλείσε</b>.</p>"
-        + "<p>3. Για την αύξηση θερμοκρασίας: <b>Αύξησε</b> ή <b>Πάνω</b> ή <b>Ανέβα</b> ή <b>Ανέβασε</b> και τον αριθμό των βαθμών.</p>"
-        + "<p>4. Για την μείωση θερμοκρασίας: <b>Μείωσε</b> ή <b>Κάτω</b> ή <b>Κατέβα</b> ή <b>Κατέβασε</b> και τον αριθμό των βαθμών.</p>"
-        + "<p>5. Για αλλαγή της λειτουργίας: <b>Λειτουργία</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Αυτόματη</b> ή <b>Ψυχρή</b> ή <b>Αφύγρανση</b> ή <b>Ανεμιστήρας</b> ή <b>Θερμή</b>.</p>"
-        + "<p>6. Για αλλαγή της ανάκλισης: <b>Ανάκλιση</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Πάνω</b> ή <b>Μέση</b> ή <b>Κάτω</b> ή <b>Ολική</b>.</p>"
-        + "<p>7. Για αλλαγή της ταχύτητας: <b>Ταχύτητα</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Αυτόματη</b> ή <b>Χαμηλή</b> ή <b>Μεσαία</b> ή <b>Υψηλή</b>.</p>"
-        + "<p>8. Για ενεργοποίηση χρονοδιακόπτη: <b>Ενεργοποίηση Χρονοδιακόπτη</b> ή <b>Άνοιξε Χρονοδιακόπτη</b> ακολουθούμενη από τα λεπτά που επιθυμεί ο χρήστης να είναι σε λειτουργία το κλιματιστικό.</p>"
-        + "<p>9. Για την απενεργοποίηση του χρονοδιακόπτη: <b>Απενεργοποίηση Χρονοδιακόπτη</b> ή <b>Κλείσε Χρονοδιακόπτη</b>'.</p>"
-        + "<p>10. Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης: <b>Αδρανοποίηση</b>.</p>"
-        + "<p>11. Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού: <b>Ενημέρωση</b>.</p>"
-        + "<p>12. Για ενεργοποίηση ή απενεργοποίηση ιονισμού: <b>Ιονισμός</b> ή <b>Καθαρισμός</b>.</p>")));
+                + "<p>2. Για την απενεργοποίηση του κλιματιστικού: <b>Απενεργοποίηση</b> ή <b>Κλείσε</b>.</p>"
+                + "<p>3. Για την αύξηση θερμοκρασίας: <b>Αύξησε</b> ή <b>Πάνω</b> ή <b>Ανέβα</b> ή <b>Ανέβασε</b> και τον αριθμό των βαθμών.</p>"
+                + "<p>4. Για την μείωση θερμοκρασίας: <b>Μείωσε</b> ή <b>Κάτω</b> ή <b>Κατέβα</b> ή <b>Κατέβασε</b> και τον αριθμό των βαθμών.</p>"
+                + "<p>5. Για αλλαγή της λειτουργίας: <b>Λειτουργία</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Αυτόματη</b> ή <b>Ψυχρή</b> ή <b>Αφύγρανση</b> ή <b>Ανεμιστήρας</b> ή <b>Θερμή</b>.</p>"
+                + "<p>6. Για αλλαγή της ανάκλισης: <b>Ανάκλιση</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Πάνω</b> ή <b>Μέση</b> ή <b>Κάτω</b> ή <b>Ολική</b>.</p>"
+                + "<p>7. Για αλλαγή της ταχύτητας: <b>Ταχύτητα</b> ακολουθούμενη από μια εκ των παρακάτω λέξεων, <b>Αυτόματη</b> ή <b>Χαμηλή</b> ή <b>Μεσαία</b> ή <b>Υψηλή</b>.</p>"
+                + "<p>8. Για ενεργοποίηση χρονοδιακόπτη: <b>Ενεργοποίηση Χρονοδιακόπτη</b> ή <b>Άνοιξε Χρονοδιακόπτη</b> ακολουθούμενη από τα λεπτά που επιθυμεί ο χρήστης να είναι σε λειτουργία το κλιματιστικό.</p>"
+                + "<p>9. Για την απενεργοποίηση του χρονοδιακόπτη: <b>Απενεργοποίηση Χρονοδιακόπτη</b> ή <b>Κλείσε Χρονοδιακόπτη</b>.</p>"
+                + "<p>10. Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης: <b>Αδρανοποίηση</b>.</p>"
+                + "<p>11. Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού: <b>Ενημέρωση</b>.</p>"
+                + "<p>12. Για ενεργοποίηση ή απενεργοποίηση ιονισμού: <b>Ιονισμός</b> ή <b>Καθαρισμός</b>.</p>")));
     }
 
     @Override

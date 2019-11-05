@@ -46,7 +46,6 @@
             android:layout_margin="8dp"
             android:gravity="center_horizontal|top"
             android:scrollbars="vertical"
-
             android:textSize="24sp" />
     </ScrollView>
 
