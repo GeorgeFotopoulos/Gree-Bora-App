@@ -457,7 +457,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
 
     private void onRight() {
         finish();
-        Intent myIntent = new Intent(BlindModeActivity.this, Information.class);
+        Intent myIntent = new Intent(BlindModeActivity.this, InformationActivity.class);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         startActivity(myIntent);
     }
