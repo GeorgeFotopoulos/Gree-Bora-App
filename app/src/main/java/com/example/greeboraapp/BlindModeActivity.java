@@ -78,7 +78,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         TTS.setPitch((float) 0.9);
                         TTS.setLanguage(localeToUse);
                     }
-                    sentenceToSay = "";
+                    //sentenceToSay = "";
                     for (int j = 0; j < command.size(); j++) {
                         if ((command.get(j).toLowerCase().contains("απενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("απενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
                             if (on) {
@@ -130,7 +130,9 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")) {
                                     if (!timer) {
                                         timer = true;
+                                        if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")){
 
+                                        }
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
@@ -185,11 +187,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                             sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + temperatureReal + " βαθμούς Κελσίου.";
                                         }
                                     }
+                                    break;
                                 } else if (temperatureShow >= 0 && (temperatureReal + temperatureShow > MAX_TEMP)) {
                                     temperatureReal = MAX_TEMP;
                                     sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MAX_TEMP + " βαθμούς Κελσίου, καθώς είναι το ανώτατο όριο.";
+                                    break;
                                 }
-                                break;
+
                             } else if (command.get(j).toLowerCase().contains("μείωσ") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) {
                                 ArrayList<String> splitCommand = new ArrayList<>();
                                 temperatureShow = -1;
@@ -222,11 +226,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                             sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + temperatureReal + " βαθμούς Κελσίου.";
                                         }
                                     }
+                                    break;
                                 } else if (temperatureShow >= 0 && (temperatureReal - temperatureShow < MIN_TEMP)) {
                                     temperatureReal = MIN_TEMP;
                                     sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MIN_TEMP + " βαθμούς Κελσίου, καθώς είναι το κατώτατο όριο.";
+                                    break;
                                 }
-                                break;
+
                             } else if (command.get(j).toLowerCase().contains("λειτουργία")) {
                                 if (command.get(j).toLowerCase().contains("αυτόματ")) {
                                     if (modeChoice != 0) {
@@ -373,11 +379,8 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         command.removeAll(command);
                     } else {
                         if (on) {
-                            sentenceToSay = "Η εντολή που δώσατε δεν αναγνωρίστηκε! Επαναλάβετε...";
+                            sentenceToSay = "Η εντολή που δώσατε δεν αναγνωρίστηκε!";
                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                            while (TTS.isSpeaking()) {
-                            }
-                            findViewById(R.id.miccommand).performClick();
                         } else {
                             sentenceToSay = "";
                         }
