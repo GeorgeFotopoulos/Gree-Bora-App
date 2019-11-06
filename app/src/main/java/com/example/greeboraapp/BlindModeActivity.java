@@ -28,9 +28,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
     ArrayList<String> command;
     HashMap<Integer, String> grades = new HashMap<>();
-    int modeChoice = -1, swingChoice = -1, fanChoice = -1, currentTemp = 21;
+    int modeChoice = -1, swingChoice = -1, fanChoice = -1;
     boolean timer = false, sleep = false, ionization = false, on = false;
     GestureDetector gesture;
+    int temperatureShow = 0;
+    int temperatureReal = 21;
+    final int MAX_TEMP = 30;
+    final int MIN_TEMP = 16;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,6 +130,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")) {
                                     if (!timer) {
                                         timer = true;
+
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
@@ -148,83 +153,82 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     }
                                     break;
                                 }
-                            } else if (command.get(j).toLowerCase().contains("αύξησε") || command.get(j).toLowerCase().contains("ανέβασε") || command.get(j).toLowerCase().contains("αύξηση") || command.get(j).toLowerCase().contains("ανέβα") || command.get(j).toLowerCase().contains("πάνω")) {
+                            } else if (command.get(j).toLowerCase().contains("αύξησ") || command.get(j).toLowerCase().contains("ανέβα") || command.get(j).toLowerCase().contains("πάνω")) {
                                 ArrayList<String> splitCommand = new ArrayList<>();
-                                int temp = 0;
-                                String tempStr = "";
-                                for (int i = 0; i < command.get(j).split(" ").length; i++) {
-                                    splitCommand.add(command.get(j).split(" ")[i]);
-                                }
-                                for (int i = 0; i < splitCommand.size(); i++) {
-                                    try {
-                                        temp = Integer.parseInt(splitCommand.get(i));
-                                        break;
-                                    } catch (Exception e) {
-                                    }
-                                    if (grades.containsKey(splitCommand.get(i))) {
-                                        tempStr = grades.get(i);
-                                        break;
-                                    }
-                                }
-                                if (!tempStr.equals("")) {
-                                    if (tempStr.equalsIgnoreCase("μηδέν")) {
-                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                    } else if (tempStr.equalsIgnoreCase("ένα") || tempStr.equalsIgnoreCase("έναν")) {
-                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + tempStr + " βαθμό Κελσίου.";
-                                        currentTemp += 1;
-                                    } else {
-                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + tempStr + " βαθμούς Κελσίου.";
-                                        currentTemp += Integer.parseInt(tempStr);
-                                    }
-                                } else {
-                                    if (temp == 0) {
-                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                    } else if (temp == 1) {
-                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + temp + " βαθμό Κελσίου.";
-                                        currentTemp += temp;
-                                    } else {
-                                        sentenceToSay = "Η θερμοκρασία αυξήθηκε κατά " + temp + " βαθμούς Κελσίου.";
-                                        currentTemp += temp;
-                                    }
-                                }
-                                break;
-                            } else if (command.get(j).toLowerCase().contains("μείωσε") || command.get(j).toLowerCase().contains("κατέβασε") || command.get(j).toLowerCase().contains("μείωση") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) {
-                                ArrayList<String> splitCommand = new ArrayList<>();
-                                int temp = -1;
+                                temperatureShow = -1;
                                 for (int i = 0; i < command.get(j).split(" ").length; i++) {
                                     splitCommand.add(command.get(j).split(" ")[i]);
                                 }
                                 for (int i = 0; i < splitCommand.size(); i++) {
                                     for (Map.Entry<Integer, String> entry : grades.entrySet()) {
                                         if (entry.getValue().equalsIgnoreCase(splitCommand.get(i))) {
-                                            temp = entry.getKey();
+                                            temperatureShow = entry.getKey();
                                             break;
                                         }
                                     }
-                                    if (temp == -1) {
+                                    if (temperatureShow == -1) {
                                         try {
-                                            temp = Integer.parseInt(splitCommand.get(i));
+                                            temperatureShow = Integer.parseInt(splitCommand.get(i));
                                             break;
                                         } catch (Exception e) {
                                         }
                                     }
                                 }
-                                if (temp >= 0) {
-                                    if (temp == 0) {
+                                if (temperatureShow >= 0 && (temperatureReal + temperatureShow <= MAX_TEMP)) {
+                                    temperatureReal = temperatureReal + temperatureShow;
+                                    if (temperatureShow == 0) {
                                         sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                    } else if (temp == 1) {
-                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά ένα βαθμό Κελσίου.";
                                     } else {
-                                        if (grades.containsKey(temp)) {
-                                            sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + grades.get(temp) + " βαθμούς Κελσίου.";
+                                        if (grades.containsKey(temperatureReal)) {
+                                            sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + grades.get(temperatureReal) + " βαθμούς Κελσίου.";
                                         } else {
-                                            sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμούς Κελσίου.";
+                                            sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + temperatureReal + " βαθμούς Κελσίου.";
+                                        }
+                                    }
+                                } else if (temperatureShow >= 0 && (temperatureReal + temperatureShow > MAX_TEMP)) {
+                                    temperatureReal = MAX_TEMP;
+                                    sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MAX_TEMP + " βαθμούς Κελσίου, καθώς είναι το ανώτατο όριο.";
+                                }
+                                break;
+                            } else if (command.get(j).toLowerCase().contains("μείωσ") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) {
+                                ArrayList<String> splitCommand = new ArrayList<>();
+                                temperatureShow = -1;
+                                for (int i = 0; i < command.get(j).split(" ").length; i++) {
+                                    splitCommand.add(command.get(j).split(" ")[i]);
+                                }
+                                for (int i = 0; i < splitCommand.size(); i++) {
+                                    for (Map.Entry<Integer, String> entry : grades.entrySet()) {
+                                        if (entry.getValue().equalsIgnoreCase(splitCommand.get(i))) {
+                                            temperatureShow = entry.getKey();
+                                            break;
+                                        }
+                                    }
+                                    if (temperatureShow == -1) {
+                                        try {
+                                            temperatureShow = Integer.parseInt(splitCommand.get(i));
+                                            break;
+                                        } catch (Exception e) {
                                         }
                                     }
                                 }
+                                if (temperatureShow >= 0 && (temperatureReal - temperatureShow >= MIN_TEMP)) {
+                                    temperatureReal = temperatureReal - temperatureShow;
+                                    if (temperatureShow == 0) {
+                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
+                                    } else {
+                                        if (grades.containsKey(temperatureReal)) {
+                                            sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + grades.get(temperatureReal) + " βαθμούς Κελσίου.";
+                                        } else {
+                                            sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + temperatureReal + " βαθμούς Κελσίου.";
+                                        }
+                                    }
+                                } else if (temperatureShow >= 0 && (temperatureReal - temperatureShow < MIN_TEMP)) {
+                                    temperatureReal = MIN_TEMP;
+                                    sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MIN_TEMP + " βαθμούς Κελσίου, καθώς είναι το κατώτατο όριο.";
+                                }
                                 break;
                             } else if (command.get(j).toLowerCase().contains("λειτουργία")) {
-                                if (command.get(j).toLowerCase().contains("αυτόματη")) {
+                                if (command.get(j).toLowerCase().contains("αυτόματ")) {
                                     if (modeChoice != 0) {
                                         modeStr = "αυτόματη";
                                         sentenceToSay = "Αυτόματη λειτουργία ενεργή.";
@@ -232,7 +236,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η αυτόματη λειτουργία είναι ήδη ενεργή.";
                                     }
-                                } else if (command.get(j).toLowerCase().contains("ψυχρή")) {
+                                } else if (command.get(j).toLowerCase().contains("ψυχρ")) {
                                     if (modeChoice != 1) {
                                         modeStr = "ψυχρή";
                                         sentenceToSay = "Ψυχρή λειτουργία ενεργή.";
@@ -267,7 +271,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                                 break;
                             } else if (command.get(j).toLowerCase().contains("ανάκλιση")) {
-                                if (command.get(j).toLowerCase().contains("ολική")) {
+                                if (command.get(j).toLowerCase().contains("ολικ")) {
                                     if (swingChoice != 0) {
                                         swingStr = "ολική";
                                         sentenceToSay = "Λειτουργία ολικής ανάκλισης ενεργή.";
@@ -302,7 +306,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                                 break;
                             } else if (command.get(j).toLowerCase().contains("ταχύτητα")) {
-                                if (command.get(j).toLowerCase().contains("αυτόματη")) {
+                                if (command.get(j).toLowerCase().contains("αυτόματ")) {
                                     if (fanChoice != 0) {
                                         fanStr = "αυτόματη";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα ενεργή.";
@@ -310,7 +314,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα είναι ήδη ενεργή.";
                                     }
-                                } else if (command.get(j).toLowerCase().contains("χαμηλή")) {
+                                } else if (command.get(j).toLowerCase().contains("χαμηλ")) {
                                     if (fanChoice != 1) {
                                         fanStr = "χαμηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα ενεργή.";
@@ -318,7 +322,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα είναι ήδη ενεργή.";
                                     }
-                                } else if (command.get(j).toLowerCase().contains("μεσαία")) {
+                                } else if (command.get(j).toLowerCase().contains("μεσαί")) {
                                     if (fanChoice != 2) {
                                         fanStr = "μεσαία";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε μεσαία ταχύτητα ενεργή.";
@@ -326,7 +330,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε μεσαία ταχύτητα είναι ήδη ενεργή.";
                                     }
-                                } else if (command.get(j).toLowerCase().contains("υψηλή")) {
+                                } else if (command.get(j).toLowerCase().contains("υψηλ")) {
                                     if (fanChoice != 3) {
                                         fanStr = "υψηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε υψηλή ταχύτητα ενεργή.";
@@ -338,9 +342,9 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 break;
                             } else if (command.get(j).toLowerCase().contains("ενημέρωση")) {
                                 if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
-                                    sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
                                 } else {
-                                    sentenceToSay = "Η θερμοκρασία είναι στους " + currentTemp + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
                                 }
                                 if (sleep) {
                                     sentenceToSay += "Η λειτουργία ύπνου είναι ενεργή..";
