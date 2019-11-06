@@ -378,7 +378,11 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         }
 
                     }
-                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+
+                    if(!sentenceToSay.equals("")){
+                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                        command.clear();
+                    }
                 }
             });
         }
