@@ -157,7 +157,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                             }
                                         }
                                         if (minutesToCount != -1) {
-
                                             //Timer Start
                                             new Thread(new Runnable() {
                                                 @Override
@@ -170,7 +169,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                                 if (!timer) {
                                                                     stopped = true;
                                                                     pStatus += minutesToCount;
-                                                                    timer = false;
+
                                                                 }
                                                             }
                                                         });
@@ -194,12 +193,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                     } else {
                                                         stopped = false;
                                                     }
+                                                    timer = false;
 
                                                 }
                                             }).start();
                                             //Loader End
+                                            sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
                                         }
-                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
                                     }
