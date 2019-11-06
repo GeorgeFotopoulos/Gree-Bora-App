@@ -60,6 +60,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     HashMap<Integer, String> grades = new HashMap<>();
     private GestureDetector gesture;
     int temperature = 21;
+    int tempWarn = 21;
     int temperatureShowReal = 21;
     private TextView txtProgress;
     private ProgressBar progressBar;
@@ -134,16 +135,15 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                     public void onInit(int status) {
                         if (status != TextToSpeech.ERROR) {
                             Locale localeToUse = new Locale("el_GR");
-                            TTS.setPitch((float) 0.8);
+                            TTS.setPitch((float) 0.9);
                             TTS.setLanguage(localeToUse);
+                            firstClickDown = System.currentTimeMillis();
                             if (!on) {
                                 ImageButton onOff = findViewById(R.id.onoff);
                                 onOff.setImageResource(R.drawable.ic_on);
-                                sentenceToSay = "Ενεργοποίηση";
                                 tempShow.setTextSize(120);
-                                tempShow.setText(temperatureShowReal+"");
+                                tempShow.setText(temperatureShowReal + "");
                                 gradeDisp.setText("℃");
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 on = true;
                                 gradeDisp.setVisibility(View.VISIBLE);
                                 mode.setVisibility(View.VISIBLE);
@@ -162,9 +162,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 ImageButton onOff = findViewById(R.id.onoff);
                                 onOff.setImageResource(R.drawable.ic_off);
                                 sentenceToSay = "Απενεργοποίηση";
-                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 on = false;
-
                                 tempShow.setTextSize(50);
                                 tempShow.setText("OFF");
                                 gradeDisp.setText("");
@@ -177,6 +175,20 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 timerDisp.setVisibility(View.INVISIBLE);
                                 sleepDisp.setVisibility(View.INVISIBLE);
                             }
+
+                            Handler h = new Handler();
+                            h.postDelayed(new Runnable() {
+                                public void run() {
+                                    if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        if (on) {
+                                            sentenceToSay = "Ενεργοποίηση";
+                                        } else {
+                                            sentenceToSay = "Απενεργοποίηση";
+                                        }
+                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                    }
+                                }
+                            }, 1000);
                         }
                     }
                 });
@@ -196,6 +208,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             if (on) {
                                 firstClickDown = System.currentTimeMillis();
                                 temperatureShowReal--;
+                                tempWarn--;
                                 if (temperatureShowReal >= MIN_TEMP) {
                                     tempShow.setText(temperatureShowReal + "");
                                 } else {
@@ -220,11 +233,28 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                     } else {
                                                         sentenceToSay = "Μείωση θερμοκρασίας κατά " + temperatureDif + " βαθμούς.";
                                                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-
                                                     }
                                                     temperature = temperatureShowReal;
                                                 } else {
-                                                    sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MIN_TEMP + " βαθμούς.";
+                                                    if (tempWarn < 16) {
+                                                        sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MIN_TEMP + " βαθμούς.";
+                                                        tempWarn = MIN_TEMP;
+                                                    } else {
+                                                        temperatureDif = temperatureShowReal - temperature;
+                                                        if (grades.containsKey(temperatureDif)) {
+                                                            if (temperatureDif == 1) {
+                                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό.";
+                                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                            } else {
+                                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς.";
+                                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                            }
+                                                        } else {
+                                                            sentenceToSay = "Μείωση θερμοκρασίας κατά " + temperatureDif + " βαθμούς.";
+                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+
+                                                        }
+                                                    }
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                     temperature = MIN_TEMP;
                                                 }
@@ -238,6 +268,80 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                 });
             }
         });
+
+        findViewById(R.id.up).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            Locale localeToUse = new Locale("el_GR");
+                            TTS.setPitch((float) 0.9);
+                            TTS.setLanguage(localeToUse);
+
+                            if (on) {
+                                firstClickUp = System.currentTimeMillis();
+                                temperatureShowReal++;
+                                tempWarn++;
+                                if (temperatureShowReal <= MAX_TEMP) {
+                                    tempShow.setText(temperatureShowReal + "");
+                                } else {
+                                    temperatureShowReal = MAX_TEMP;
+                                    tempShow.setText(temperatureShowReal + "");
+                                }
+
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (System.currentTimeMillis() - firstClickUp >= 950) {
+                                            if (tempWarn - temperature != 0) {
+                                                if (temperatureShowReal < MAX_TEMP) {
+                                                    temperatureDif = temperatureShowReal - temperature;
+                                                    if (grades.containsKey(temperatureDif)) {
+                                                        if (temperatureDif == 1) {
+                                                            sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό";
+                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                        } else {
+                                                            sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς";
+                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                        }
+                                                    } else {
+                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + temperatureDif + " βαθμούς";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    }
+                                                    temperature = temperatureShowReal;
+                                                } else {
+                                                    if (tempWarn > 30) {
+                                                        sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MAX_TEMP + " βαθμούς.";
+                                                        tempWarn = MAX_TEMP;
+                                                    } else {
+                                                        temperatureDif = temperatureShowReal - temperature;
+                                                        if (grades.containsKey(temperatureDif)) {
+                                                            if (temperatureDif == 1) {
+                                                                sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό";
+                                                            } else {
+                                                                sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς";
+                                                            }
+                                                        } else {
+                                                            sentenceToSay = "Αύξηση θερμοκρασίας κατά " + temperatureDif + " βαθμούς";
+                                                        }
+                                                    }
+                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    temperature = MAX_TEMP;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }, 1000);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
 
         findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,9 +359,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 if (!timerOn) {
                                     if ((timeToSet + 15) <= 180) {
                                         timeToSet = timeToSet + 15;
-                                        if(timeToSet >99 ){
+                                        if (timeToSet > 99) {
                                             tempShow.setTextSize(90);
-                                        }else{
+                                        } else {
                                             tempShow.setTextSize(120);
                                         }
                                         tempShow.setText(timeToSet + "");
@@ -304,7 +408,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                 gradeDisp.setText("℃");
                                                 timerOn = false;
                                             } else {
-                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " λεπτά.";
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " δευτερόλεπτα.";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 timer.setVisibility(View.VISIBLE);
                                                 timerOn = true;
@@ -399,63 +503,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             }
         });
 
-        findViewById(R.id.up).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int status) {
-                        if (status != TextToSpeech.ERROR) {
-                            Locale localeToUse = new Locale("el_GR");
-                            TTS.setPitch((float) 0.9);
-                            TTS.setLanguage(localeToUse);
-
-                            if (on) {
-                                firstClickUp = System.currentTimeMillis();
-                                temperatureShowReal++;
-                                if (temperatureShowReal <= MAX_TEMP) {
-                                    tempShow.setText(temperatureShowReal + "");
-                                } else {
-                                    temperatureShowReal = MAX_TEMP;
-                                    tempShow.setText(temperatureShowReal + "");
-                                }
-
-                                Handler h = new Handler();
-                                h.postDelayed(new Runnable() {
-                                    public void run() {
-                                        if (System.currentTimeMillis() - firstClickUp >= 950) {
-                                            if (temperatureShowReal - temperature != 0) {
-                                                if (temperatureShowReal < MAX_TEMP) {
-                                                    temperatureDif = temperatureShowReal - temperature;
-                                                    if (grades.containsKey(temperatureDif)) {
-                                                        if (temperatureDif == 1) {
-                                                            sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                        } else {
-                                                            sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                        }
-                                                    } else {
-                                                        sentenceToSay = "Αύξηση θερμοκρασίας κατά " + temperatureDif + " βαθμούς";
-                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    }
-                                                    temperature = temperatureShowReal;
-                                                } else {
-                                                    sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MAX_TEMP + " βαθμούς.";
-                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    temperature = MAX_TEMP;
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }, 1000);
-                            }
-                        }
-                    }
-                });
-            }
-        });
 
         findViewById(R.id.mode).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -647,13 +694,13 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                         if (System.currentTimeMillis() - firstClickDown >= 950) {
 
                                             if (swingCount == 1) {
-                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε χαμηλή";
+                                                sentenceToSay = "Η ανάκλιση ρυθμίστηκε σε χαμηλή";
                                             } else if (swingCount == 2) {
-                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε μεσαία";
+                                                sentenceToSay = "Η ανάκλιση ρυθμίστηκε σε μεσαία";
                                             } else if (swingCount == 3) {
-                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε υψηλή";
+                                                sentenceToSay = "Η ανάκλιση ρυθμίστηκε σε υψηλή";
                                             } else {
-                                                sentenceToSay = "Η κατεύθυνση ρυθμίστηκε σε ολική";
+                                                sentenceToSay = "Η ανάκλιση ρυθμίστηκε σε ολική";
                                             }
                                             TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                         }
@@ -756,9 +803,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                     if (timerOn) {
                                         timerDisp.setVisibility(View.VISIBLE);
                                         if (sleepOn || cleanOn) {
-                                            extras = extras + "και ο χρονοδιακόπτης έχει ρυθμιστεί για " + (int) countDown + " λεπτά ακόμα";
+                                            extras = extras + "και ο χρονοδιακόπτης έχει ρυθμιστεί για " + (int) timeStr + " λεπτά";
                                         } else {
-                                            extras = "ο χρονοδιακόπτης έχει ρυθμιστεί για " + (int) countDown + " λεπτά ακόμα";
+                                            extras = "ο χρονοδιακόπτης έχει ρυθμιστεί για " + (int) timeStr + " λεπτά";
                                         }
                                     }
                                     if (sleepOn || cleanOn || timerOn) {
