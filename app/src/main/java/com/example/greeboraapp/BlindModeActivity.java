@@ -17,10 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
@@ -28,10 +27,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     TextToSpeech TTS;
     String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
     ArrayList<String> command;
-    HashMap<String, Integer> unique = new HashMap<>();
-    ArrayList<String> grades = new ArrayList<>();
-    List<String> uniques = Arrays.asList("μηδέν", "έναν", "ένα", "δύο", "τρεις", "τέσσερις", "πέντε", "έξι", "εφτά", "οκτώ",
-            "οχτώ", "εννέα", "εννιά", "δέκα", "ένδεκα", "έντεκα", "δώδεκα", "δεκατρείς", "δεκατέσσερις", "δεκαπέντε");
+    HashMap<Integer, String> grades = new HashMap<>();
     int modeChoice = -1, swingChoice = -1, fanChoice = -1, currentTemp = 21;
     boolean timer = false, sleep = false, ionization = false, on = false;
     GestureDetector gesture;
@@ -41,15 +37,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         super.onCreate(savedInstanceState);
         setContentView(R.layout.blind_mode);
 
-        grades.addAll(uniques);
-
-        unique.put("έναν", 1);
-        unique.put("τρεις", 3);
-        unique.put("τέσσερις", 4);
-        unique.put("δεκατρείς", 13);
-        unique.put("δεκατέσσερις", 14);
-        unique.put("εικοσιτρείς", 23);
-        unique.put("εικοσιτέσσερις", 24);
+        grades.put(1, "έναν");
+        grades.put(3, "τρεις");
+        grades.put(4, "τέσσερις");
+        grades.put(13, "δεκατρείς");
+        grades.put(14, "δεκατέσσερις");
+        grades.put(23, "εικοσιτρείς");
+        grades.put(24, "εικοσιτέσσερις");
 
         gesture = new GestureDetector(new BlindModeActivity.SwipeGestureDetector());
         TextView swipeLeft = findViewById(R.id.swipeLeft);
@@ -71,7 +65,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     private void readCommand() {
-        sentenceToSay="";
+        sentenceToSay = "";
         if (command != null) {
             TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                 @Override
@@ -123,19 +117,19 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 break;
                             }
                         } else if (command.get(j).toLowerCase().contains("αύξησε") || command.get(j).toLowerCase().contains("ανέβασε") || command.get(j).toLowerCase().contains("αύξηση") || command.get(j).toLowerCase().contains("ανέβα") || command.get(j).toLowerCase().contains("πάνω")) {
-                            ArrayList<String> st = new ArrayList<>();
+                            ArrayList<String> splitCommand = new ArrayList<>();
                             int temp = 0;
                             String tempStr = "";
                             for (int i = 0; i < command.get(j).split(" ").length; i++) {
-                                st.add(command.get(j).split(" ")[i]);
+                                splitCommand.add(command.get(j).split(" ")[i]);
                             }
-                            for (int i = 0; i < st.size(); i++) {
+                            for (int i = 0; i < splitCommand.size(); i++) {
                                 try {
-                                    temp = Integer.parseInt(st.get(i));
+                                    temp = Integer.parseInt(splitCommand.get(i));
                                     break;
                                 } catch (Exception e) {
                                 }
-                                if (grades.contains(st.get(i))) {
+                                if (grades.containsKey(splitCommand.get(i))) {
                                     tempStr = grades.get(i);
                                     break;
                                 }
@@ -165,45 +159,38 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 break;
                             }
                         } else if (command.get(j).toLowerCase().contains("μείωσε") || command.get(j).toLowerCase().contains("κατέβασε") || command.get(j).toLowerCase().contains("μείωση") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) {
-                            ArrayList<String> st = new ArrayList<>();
-                            int temp = 0;
-                            String tempStr = "";
+                            ArrayList<String> splitCommand = new ArrayList<>();
+                            int temp = -1;
                             for (int i = 0; i < command.get(j).split(" ").length; i++) {
-                                st.add(command.get(j).split(" ")[i]);
+                                splitCommand.add(command.get(j).split(" ")[i]);
                             }
-                            for (int i = 0; i < st.size(); i++) {
-                                try {
-                                    temp = Integer.parseInt(st.get(i));
-                                    break;
-                                } catch (Exception e) {
+                            for (int i = 0; i < splitCommand.size(); i++) {
+                                for (Map.Entry<Integer, String> entry : grades.entrySet()) {
+                                    if (entry.getValue().equalsIgnoreCase(splitCommand.get(i))) {
+                                        temp = entry.getKey();
+                                        break;
+                                    }
                                 }
-                                if (grades.contains(st.get(i))) {
-                                    tempStr = grades.get(i);
-                                    break;
+                                if (temp == -1) {
+                                    try {
+                                        temp = Integer.parseInt(splitCommand.get(i));
+                                        break;
+                                    } catch (Exception e) {
+                                    }
                                 }
                             }
                             if (on) {
-                                if (!tempStr.equals("")) {
-                                    if (tempStr.equalsIgnoreCase("μηδέν")) {
-                                        sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
-                                    } else if (tempStr.equalsIgnoreCase("ένα") || tempStr.equalsIgnoreCase("έναν")) {
-                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + tempStr + " βαθμό Κελσίου.";
-                                        currentTemp -= 1;
-                                    } else {
-                                        if (unique.containsKey(tempStr)) {
-                                            currentTemp -= unique.get(tempStr);
-                                        }
-                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + tempStr + " βαθμούς Κελσίου.";
-                                    }
-                                } else {
+                                if (temp >= 0) {
                                     if (temp == 0) {
                                         sentenceToSay = "Δεν υπήρξε μεταβολή στην θερμοκρασία.";
                                     } else if (temp == 1) {
-                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμό Κελσίου.";
-                                        currentTemp -= temp;
+                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά ένα βαθμό Κελσίου.";
                                     } else {
-                                        sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμούς Κελσίου.";
-                                        currentTemp -= temp;
+                                        if (grades.containsKey(temp)) {
+                                            sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + grades.get(temp) + " βαθμούς Κελσίου.";
+                                        } else {
+                                            sentenceToSay = "Η θερμοκρασία μειώθηκε κατά " + temp + " βαθμούς Κελσίου.";
+                                        }
                                     }
                                 }
                                 break;
@@ -379,7 +366,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
 
                     }
 
-                    if(!sentenceToSay.equals("")){
+                    if (!sentenceToSay.equals("")) {
                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                         command.clear();
                     }
