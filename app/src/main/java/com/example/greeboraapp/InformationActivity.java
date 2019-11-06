@@ -79,11 +79,6 @@ public class InformationActivity extends AppCompatActivity {
                                             e.printStackTrace();
                                         }
                                     }
-                                    while (TTS.isSpeaking()) {
-
-                                    }
-                                    soundOn = false;
-                                    sound.setImageResource(R.drawable.ic_sound_off);
                                 }
                             }).start();
 
@@ -97,8 +92,8 @@ public class InformationActivity extends AppCompatActivity {
                                             e.printStackTrace();
                                         }
                                     }
-                                    soundOn = false;
-                                    sound.setImageResource(R.drawable.ic_sound_off);
+                                    //soundOn = false;
+                                    //sound.setImageResource(R.drawable.ic_sound_off);
                                 }
                             }).start();
                             sentenceToSay = "Για την ενεργοποίηση του κλιματιστικού πείτε: 'Ενεργοποίηση', ή 'Άνοιξε'...";
