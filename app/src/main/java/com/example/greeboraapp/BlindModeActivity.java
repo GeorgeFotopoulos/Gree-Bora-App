@@ -460,5 +460,4 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
             return false;
         }
     }
-
 }
