@@ -3,16 +3,23 @@ package com.example.greeboraapp;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +36,16 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     ArrayList<String> command;
     HashMap<Integer, String> grades = new HashMap<>();
     int modeChoice = -1, swingChoice = -1, fanChoice = -1;
-    boolean timer = false, sleep = false, ionization = false, on = false;
+    boolean timer = false, sleep = false, ionization = false, on = false, stopped = false;
     GestureDetector gesture;
     int temperatureShow = 0;
     int temperatureReal = 21;
     final int MAX_TEMP = 30;
     final int MIN_TEMP = 16;
+    int minutesToCount = 0;
+    int pStatus = 0;
+    Handler handler = new Handler();
+    Handler mHandler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +89,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         TTS.setPitch((float) 0.9);
                         TTS.setLanguage(localeToUse);
                     }
-                    //sentenceToSay = "";
+                    sentenceToSay = "";
                     for (int j = 0; j < command.size(); j++) {
                         if ((command.get(j).toLowerCase().contains("απενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("απενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
                             if (on) {
@@ -130,10 +141,65 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")) {
                                     if (!timer) {
                                         timer = true;
-                                        if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")){
-
+                                        ArrayList<String> splitCommand = new ArrayList<>();
+                                        minutesToCount = -1;
+                                        for (int i = 0; i < command.get(j).split(" ").length; i++) {
+                                            splitCommand.add(command.get(j).split(" ")[i]);
                                         }
-                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε.";
+                                        for (int i = 0; i < splitCommand.size(); i++) {
+
+                                            if (minutesToCount == -1) {
+                                                try {
+                                                    minutesToCount = Integer.parseInt(splitCommand.get(i));
+                                                    break;
+                                                } catch (Exception e) {
+                                                }
+                                            }
+                                        }
+                                        if (minutesToCount != -1) {
+
+                                            //Timer Start
+                                            new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    pStatus = 0;
+                                                    while (pStatus <= minutesToCount) {
+                                                        handler.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if (!timer) {
+                                                                    stopped = true;
+                                                                    pStatus += minutesToCount;
+                                                                    timer = false;
+                                                                }
+                                                            }
+                                                        });
+                                                        try {
+                                                            Thread.sleep(1000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        pStatus++;
+                                                    }
+
+                                                    if (!stopped) {
+                                                        TTS.speak("Το κλιματιστικό απενεργοποιήθηκε.", TextToSpeech.QUEUE_ADD, null);
+                                                        on = false;
+                                                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                                                        } else {
+                                                            v.vibrate(500);
+                                                        }
+                                                    } else {
+                                                        stopped = false;
+                                                    }
+
+                                                }
+                                            }).start();
+                                            //Loader End
+                                        }
+                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη ενεργή.";
                                     }
@@ -336,7 +402,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε μεσαία ταχύτητα είναι ήδη ενεργή.";
                                     }
-                                } else if (command.get(j).toLowerCase().contains("υψηλ")) {
+                                } else if (command.get(j).toLowerCase().contains("ψηλ")) {
                                     if (fanChoice != 3) {
                                         fanStr = "υψηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε υψηλή ταχύτητα ενεργή.";
@@ -370,6 +436,47 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     }
                                 }
                                 break;
+                            } else if (command.get(j).toLowerCase().contains("θερμοκρασία")) {
+                                ArrayList<String> splitCommand = new ArrayList<>();
+                                temperatureShow = -1;
+                                for (int i = 0; i < command.get(j).split(" ").length; i++) {
+                                    splitCommand.add(command.get(j).split(" ")[i]);
+                                }
+                                for (int i = 0; i < splitCommand.size(); i++) {
+                                    for (Map.Entry<Integer, String> entry : grades.entrySet()) {
+                                        if (entry.getValue().equalsIgnoreCase(splitCommand.get(i))) {
+                                            temperatureShow = entry.getKey();
+                                            break;
+                                        }
+                                    }
+                                    if (temperatureShow == -1) {
+                                        try {
+                                            temperatureShow = Integer.parseInt(splitCommand.get(i));
+                                            break;
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                }
+                                if (temperatureShow >= MIN_TEMP && temperatureShow <= MAX_TEMP) {
+                                    if (temperatureReal == temperatureShow) {
+                                        if (grades.containsKey(temperatureReal)) {
+                                            sentenceToSay = "Η θερμοκρασία βρίσκεται ήδη στους " + grades.get(temperatureReal) + " βαθμούς.";
+                                        } else {
+                                            sentenceToSay = "Η θερμοκρασία βρίσκεται ήδη στους " + temperatureReal + " βαθμούς.";
+                                        }
+                                    } else {
+                                        temperatureReal = temperatureShow;
+                                        if (grades.containsKey(temperatureReal)) {
+                                            sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + grades.get(temperatureReal) + " βαθμούς Κελσίου.";
+                                        } else {
+                                            sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + temperatureReal + " βαθμούς Κελσίου.";
+                                        }
+                                    }
+                                    break;
+                                } else {
+                                    sentenceToSay = "Το κλιματιστικό δέχεται από " + MIN_TEMP + " , έως και " + MAX_TEMP + " βαθμούς Κελσίου.";
+                                    break;
+                                }
                             }
                         }
                     }

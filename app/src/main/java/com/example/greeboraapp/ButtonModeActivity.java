@@ -408,7 +408,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                 gradeDisp.setText("℃");
                                                 timerOn = false;
                                             } else {
-                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " δευτερόλεπτα.";
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " λεπτά.";
                                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 timer.setVisibility(View.VISIBLE);
                                                 timerOn = true;
