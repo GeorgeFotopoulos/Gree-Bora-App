@@ -67,6 +67,10 @@ public class InformationActivity extends AppCompatActivity {
                                                 } else {
                                                     sound.setImageResource(R.drawable.ic_sound_on);
                                                 }
+                                                if(!TTS.isSpeaking()){
+                                                    soundOn = false;
+                                                    sound.setImageResource(R.drawable.ic_sound_off);
+                                                }
                                             }
                                         });
                                         try {
@@ -82,20 +86,6 @@ public class InformationActivity extends AppCompatActivity {
                                 }
                             }).start();
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    while (TTS.isSpeaking()) {
-                                        try {
-                                            Thread.sleep(500);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    //soundOn = false;
-                                    //sound.setImageResource(R.drawable.ic_sound_off);
-                                }
-                            }).start();
                             sentenceToSay = "Για την ενεργοποίηση του κλιματιστικού πείτε: 'Ενεργοποίηση', ή 'Άνοιξε'...";
                             // "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
                             // "Για την αύξηση θερμοκρασίας πείτε: 'Αύξησε', ή 'Πάνω', ή 'Ανέβα', ή 'Ανέβασε', και τον αριθμό των βαθμών..."
