@@ -57,7 +57,15 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     final int MAX_TEMP = 30;
     final int MIN_TEMP = 16;
     ObjectAnimator textColorAnim;
-    HashMap<Integer, String> grades = new HashMap<>();
+    HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
+        put(1, "έναν");
+        put(3, "τρεις");
+        put(4, "τέσσερις");
+        put(13, "δεκατρείς");
+        put(14, "δεκατέσσερις");
+        put(23, "εικοσιτρείς");
+        put(24, "εικοσιτέσσερις");
+    }};
     private GestureDetector gesture;
     int temperature = 21;
     int tempWarn = 21;
@@ -67,57 +75,67 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     private int pStatus = 0;
     private Handler handler = new Handler();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.button_mode);
-        grades.put(1, "έναν");
-        grades.put(3, "τρεις");
-        grades.put(4, "τέσσερις");
-        grades.put(13, "δεκατρείς");
-        grades.put(14, "δεκατέσσερις");
-        grades.put(23, "εικοσιτρείς");
-        grades.put(24, "εικοσιτέσσερις");
+
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
+            on = intent.getExtras().getBoolean("onOff");
+            modeCount = intent.getExtras().getInt("mode");
+            swingCount = intent.getExtras().getInt("swing");
+            fanCount = intent.getExtras().getInt("fan");
+            sleepOn = intent.getExtras().getBoolean("sleep");
+            timerOn = intent.getExtras().getBoolean("timer");
+            cleanOn = intent.getExtras().getBoolean("clean");
+            temperatureShowReal = intent.getExtras().getInt("temperature");
+        }
+
         final Handler mHandler = new Handler();
 
         gesture = new GestureDetector(new ButtonModeActivity.SwipeGestureDetector());
 
         final Button fan = findViewById(R.id.fan);
-        fan.setVisibility(View.GONE);
         final Button swing = findViewById(R.id.swing);
-        swing.setVisibility(View.GONE);
         final Button sleep = findViewById(R.id.sleep);
-        sleep.setVisibility(View.GONE);
         final Button timer = findViewById(R.id.timer);
-        timer.setVisibility(View.GONE);
         final Button temp = findViewById(R.id.temp);
-        temp.setVisibility(View.GONE);
         final Button clean = findViewById(R.id.clean);
-        clean.setVisibility(View.GONE);
-
         final TextView tempShow = findViewById(R.id.tempShow);
-        tempShow.setVisibility(View.VISIBLE);
         final TextView mode = findViewById(R.id.modeShow);
-        mode.setVisibility(View.INVISIBLE);
         final ImageView fanDisp = findViewById(R.id.fanShow);
-        fanDisp.setVisibility(View.INVISIBLE);
-        fanDisp.setColorFilter(Color.parseColor("#808080"));
         final ImageView swingDisp = findViewById(R.id.swingShow);
-        swingDisp.setVisibility(View.INVISIBLE);
         final ImageView cleanDisp = findViewById(R.id.cleanShow);
-        cleanDisp.setVisibility(View.INVISIBLE);
         final ProgressBar timerDisp = findViewById(R.id.timerShow);
-        timerDisp.setVisibility(View.INVISIBLE);
         final ImageView sleepDisp = findViewById(R.id.sleepShow);
-        sleepDisp.setVisibility(View.INVISIBLE);
         final TextView gradeDisp = findViewById(R.id.gradeShow);
-        gradeDisp.setVisibility(View.INVISIBLE);
         final TextView progressDisp = findViewById(R.id.txtProgress);
-        progressDisp.setVisibility(View.INVISIBLE);
 
-        tempShow.setTextSize(50);
-        tempShow.setText("OFF");
-        gradeDisp.setText("");
+        if(!on) {
+            fan.setVisibility(View.GONE);
+            swing.setVisibility(View.GONE);
+            sleep.setVisibility(View.GONE);
+            timer.setVisibility(View.GONE);
+            temp.setVisibility(View.GONE);
+            clean.setVisibility(View.GONE);
+
+            tempShow.setVisibility(View.VISIBLE);
+            mode.setVisibility(View.INVISIBLE);
+            fanDisp.setVisibility(View.INVISIBLE);
+            fanDisp.setColorFilter(Color.parseColor("#808080"));
+            swingDisp.setVisibility(View.INVISIBLE);
+            cleanDisp.setVisibility(View.INVISIBLE);
+            timerDisp.setVisibility(View.INVISIBLE);
+            sleepDisp.setVisibility(View.INVISIBLE);
+            gradeDisp.setVisibility(View.INVISIBLE);
+            progressDisp.setVisibility(View.INVISIBLE);
+
+            tempShow.setTextSize(50);
+            tempShow.setText("OFF");
+            gradeDisp.setText("");
+        }
 
         final TextView hideShow = findViewById(R.id.options);
         textColorAnim = ObjectAnimator.ofInt(hideShow, "textColor", Color.BLACK, Color.TRANSPARENT);
@@ -669,7 +687,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-
                                 firstClickDown = System.currentTimeMillis();
                                 swingCount++;
                                 if (swingCount == 5) {
@@ -892,7 +909,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         finish();
         Intent myIntent = new Intent(ButtonModeActivity.this, BlindModeActivity.class);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        startActivity(myIntent);
         myIntent.putExtra("onOff", on);
         myIntent.putExtra("mode", modeStr);
         myIntent.putExtra("swing", swingStr);
@@ -901,6 +917,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         myIntent.putExtra("timer", timerOn);
         myIntent.putExtra("clean", cleanOn);
         myIntent.putExtra("temperature", temperatureShowReal);
+        startActivity(myIntent);
     }
 
     @Override

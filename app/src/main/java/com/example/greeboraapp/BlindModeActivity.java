@@ -13,13 +13,11 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,35 +28,41 @@ import java.util.Map;
 
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
-    ObjectAnimator swipeLeftAnim, swipeRightAnim;
-    TextToSpeech TTS;
+    final int MAX_TEMP = 30, MIN_TEMP = 16;
+    int modeCount = 1, swingCount = 0, fanCount = 0, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0;
     String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
-    ArrayList<String> command;
-    HashMap<Integer, String> grades = new HashMap<>();
-    int modeChoice = -1, swingChoice = -1, fanChoice = -1;
-    boolean timer = false, sleep = false, ionization = false, on = false, stopped = false;
-    GestureDetector gesture;
-    int temperatureShow = 0;
-    int temperatureReal = 21;
-    final int MAX_TEMP = 30;
-    final int MIN_TEMP = 16;
-    int minutesToCount = 0;
-    int pStatus = 0;
+    boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false;
+    HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
+        put(1, "έναν");
+        put(3, "τρεις");
+        put(4, "τέσσερις");
+        put(13, "δεκατρείς");
+        put(14, "δεκατέσσερις");
+        put(23, "εικοσιτρείς");
+        put(24, "εικοσιτέσσερις");
+    }};
+    ObjectAnimator swipeLeftAnim, swipeRightAnim;
     Handler handler = new Handler();
-    Handler mHandler = new Handler();
+    ArrayList<String> command;
+    GestureDetector gesture;
+    TextToSpeech TTS;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.blind_mode);
 
-        grades.put(1, "έναν");
-        grades.put(3, "τρεις");
-        grades.put(4, "τέσσερις");
-        grades.put(13, "δεκατρείς");
-        grades.put(14, "δεκατέσσερις");
-        grades.put(23, "εικοσιτρείς");
-        grades.put(24, "εικοσιτέσσερις");
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
+            on = intent.getExtras().getBoolean("onOff");
+            modeCount = intent.getExtras().getInt("mode");
+            swingCount = intent.getExtras().getInt("swing");
+            fanCount = intent.getExtras().getInt("fan");
+            sleepOn = intent.getExtras().getBoolean("sleep");
+            timerOn = intent.getExtras().getBoolean("timer");
+            cleanOn = intent.getExtras().getBoolean("clean");
+            temperatureReal = intent.getExtras().getInt("temperature");
+        }
 
         gesture = new GestureDetector(new BlindModeActivity.SwipeGestureDetector());
         TextView swipeLeft = findViewById(R.id.swipeLeft);
@@ -113,24 +117,24 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                         for (int j = 0; j < command.size(); j++) {
                             if (command.get(j).toLowerCase().contains("απενεργοποίησ") || command.get(j).toLowerCase().contains("κλείσε")) {
                                 if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")) {
-                                    if (timer) {
-                                        timer = false;
+                                    if (timerOn) {
+                                        timerOn = false;
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία χρονοδιακόπτη είναι ήδη απενεργοποιημένη.";
                                     }
                                     break;
                                 } else if (command.get(j).toLowerCase().contains("αδρανοποίηση")) {
-                                    if (sleep) {
-                                        sleep = false;
+                                    if (sleepOn) {
+                                        sleepOn = false;
                                         sentenceToSay = "Η λειτουργία αδρανοποίησης απενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία αδρανοποίησης είναι ήδη απενεργοποιημένη.";
                                     }
                                     break;
                                 } else if (command.get(j).toLowerCase().contains("ιονισμ") || command.get(j).toLowerCase().contains("καθαρισμ")) {
-                                    if (ionization) {
-                                        ionization = false;
+                                    if (cleanOn) {
+                                        cleanOn = false;
                                         sentenceToSay = "Η λειτουργία ιονισμού απενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία ιονισμού είναι ήδη απενεργοποιημένη.";
@@ -139,8 +143,8 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                             } else if (command.get(j).toLowerCase().contains("ενεργοποίησ") || command.get(j).toLowerCase().contains("άνοιξε")) {
                                 if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")) {
-                                    if (!timer) {
-                                        timer = true;
+                                    if (!timerOn) {
+                                        timerOn = true;
                                         ArrayList<String> splitCommand = new ArrayList<>();
                                         minutesToCount = -1;
                                         for (int i = 0; i < command.get(j).split(" ").length; i++) {
@@ -157,7 +161,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                             }
                                         }
                                         if (minutesToCount != -1) {
-                                            //Timer Start
+                                            //timerOn Start
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -166,7 +170,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                         handler.post(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                if (!timer) {
+                                                                if (!timerOn) {
                                                                     stopped = true;
                                                                     pStatus += minutesToCount;
 
@@ -193,7 +197,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                     } else {
                                                         stopped = false;
                                                     }
-                                                    timer = false;
+                                                    timerOn = false;
 
                                                 }
                                             }).start();
@@ -205,16 +209,16 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     }
                                     break;
                                 } else if (command.get(j).toLowerCase().contains("αδρανοποίηση")) {
-                                    if (!sleep) {
-                                        sleep = true;
+                                    if (!sleepOn) {
+                                        sleepOn = true;
                                         sentenceToSay = "Η λειτουργία αδρανοποίησης ενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία αδρανοποίησης είναι ήδη ενεργοποιημένη.";
                                     }
                                     break;
                                 } else if (command.get(j).toLowerCase().contains("ιονισμ") || command.get(j).toLowerCase().contains("καθαρισμ")) {
-                                    if (!ionization) {
-                                        ionization = true;
+                                    if (!cleanOn) {
+                                        cleanOn = true;
                                         sentenceToSay = "Η λειτουργία ιονισμού ενεργοποιήθηκε.";
                                     } else {
                                         sentenceToSay = "Η λειτουργία ιονισμού είναι ήδη ενεργοποιημένη.";
@@ -301,42 +305,42 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
 
                             } else if (command.get(j).toLowerCase().contains("λειτουργία")) {
                                 if (command.get(j).toLowerCase().contains("αυτόματ")) {
-                                    if (modeChoice != 0) {
+                                    if (modeCount != 1) {
                                         modeStr = "αυτόματη";
                                         sentenceToSay = "Αυτόματη λειτουργία ενεργή.";
-                                        modeChoice = 0;
+                                        modeCount = 1;
                                     } else {
                                         sentenceToSay = "Η αυτόματη λειτουργία είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("ψυχρ")) {
-                                    if (modeChoice != 1) {
+                                    if (modeCount != 2) {
                                         modeStr = "ψυχρή";
                                         sentenceToSay = "Ψυχρή λειτουργία ενεργή.";
-                                        modeChoice = 1;
+                                        modeCount = 2;
                                     } else {
                                         sentenceToSay = "Η ψυχρή λειτουργία είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("αφύγρανση")) {
-                                    if (modeChoice != 2) {
+                                    if (modeCount != 3) {
                                         modeStr = "αφύγρανσης";
                                         sentenceToSay = "Λειτουργία αφύγρανσης ενεργή.";
-                                        modeChoice = 2;
+                                        modeCount = 3;
                                     } else {
                                         sentenceToSay = "Η λειτουργία αφύγρανσης είναι ηδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("ανεμιστήρα")) {
-                                    if (modeChoice != 3) {
+                                    if (modeCount != 4) {
                                         modeStr = "ανεμιστήρα";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα ενεργή.";
-                                        modeChoice = 3;
+                                        modeCount = 4;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα είναι ηδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("θερμή")) {
-                                    if (modeChoice != 4) {
+                                    if (modeCount != 5) {
                                         modeStr = "θερμή";
                                         sentenceToSay = "Θερμή λειτουργία ενεργή.";
-                                        modeChoice = 4;
+                                        modeCount = 5;
                                     } else {
                                         sentenceToSay = "Η θερμή λειτουργία είναι ηδη ενεργή.";
                                     }
@@ -344,34 +348,34 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 break;
                             } else if (command.get(j).toLowerCase().contains("ανάκλιση")) {
                                 if (command.get(j).toLowerCase().contains("ολικ")) {
-                                    if (swingChoice != 0) {
+                                    if (swingCount != 1) {
                                         swingStr = "ολική";
                                         sentenceToSay = "Λειτουργία ολικής ανάκλισης ενεργή.";
-                                        swingChoice = 0;
+                                        swingCount = 1;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ολικής ανάκλισης είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("κάτω")) {
-                                    if (swingChoice != 1) {
+                                    if (swingCount != 2) {
                                         swingStr = "κάτω";
                                         sentenceToSay = "Λειτουργία κάτω ανάκλισης ενεργή.";
-                                        swingChoice = 1;
+                                        swingCount = 2;
                                     } else {
                                         sentenceToSay = "Η λειτουργία κάτω ανάκλισης είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("μέση")) {
-                                    if (swingChoice != 2) {
+                                    if (swingCount != 3) {
                                         swingStr = "μέση";
                                         sentenceToSay = "Λειτουργία μέσης ανάκλισης ενεργή.";
-                                        swingChoice = 2;
+                                        swingCount = 3;
                                     } else {
                                         sentenceToSay = "Η λειτουργία μέσης ανάκλισης είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("πάνω")) {
-                                    if (swingChoice != 3) {
+                                    if (swingCount != 4) {
                                         swingStr = "πάνω";
                                         sentenceToSay = "Λειτουργία πάνω ανάκλισης ενεργή.";
-                                        swingChoice = 3;
+                                        swingCount = 4;
                                     } else {
                                         sentenceToSay = "Η λειτουργία πάνω ανάκλισης είναι ήδη ενεργή.";
                                     }
@@ -379,34 +383,34 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 break;
                             } else if (command.get(j).toLowerCase().contains("ταχύτητα")) {
                                 if (command.get(j).toLowerCase().contains("αυτόματ")) {
-                                    if (fanChoice != 0) {
+                                    if (fanCount != 1) {
                                         fanStr = "αυτόματη";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα ενεργή.";
-                                        fanChoice = 0;
+                                        fanCount = 1;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε αυτόματη ταχύτητα είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("χαμηλ")) {
-                                    if (fanChoice != 1) {
+                                    if (fanCount != 2) {
                                         fanStr = "χαμηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα ενεργή.";
-                                        fanChoice = 1;
+                                        fanCount = 2;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε χαμηλή ταχύτητα είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("μεσαί")) {
-                                    if (fanChoice != 2) {
+                                    if (fanCount != 3) {
                                         fanStr = "μεσαία";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε μεσαία ταχύτητα ενεργή.";
-                                        fanChoice = 2;
+                                        fanCount = 3;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε μεσαία ταχύτητα είναι ήδη ενεργή.";
                                     }
                                 } else if (command.get(j).toLowerCase().contains("ψηλ")) {
-                                    if (fanChoice != 3) {
+                                    if (fanCount != 4) {
                                         fanStr = "υψηλή";
                                         sentenceToSay = "Λειτουργία ανεμιστήρα σε υψηλή ταχύτητα ενεργή.";
-                                        fanChoice = 3;
+                                        fanCount = 4;
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα σε υψηλή ταχύτητα είναι ήδη ενεργή.";
                                     }
@@ -418,18 +422,18 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 } else {
                                     sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
                                 }
-                                if (sleep) {
+                                if (sleepOn) {
                                     sentenceToSay += "Η λειτουργία ύπνου είναι ενεργή..";
                                 }
-                                if (ionization) {
-                                    if (sleep) {
+                                if (cleanOn) {
+                                    if (sleepOn) {
                                         sentenceToSay += "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές..";
                                     } else {
                                         sentenceToSay += "Η λειτουργία ιονισμού είναι ενεργή..";
                                     }
                                 }
-                                if (timer) {
-                                    if (!sleep && !ionization) {
+                                if (timerOn) {
+                                    if (!sleepOn && !cleanOn) {
                                         sentenceToSay += "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα..";
                                     } else {
                                         sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα..";
@@ -529,6 +533,14 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         finish();
         Intent myIntent = new Intent(BlindModeActivity.this, ButtonModeActivity.class);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        myIntent.putExtra("onOff", on);
+        myIntent.putExtra("mode", modeStr);
+        myIntent.putExtra("swing", swingStr);
+        myIntent.putExtra("fan", fanStr);
+        myIntent.putExtra("sleep", sleepOn);
+        myIntent.putExtra("timer", timerOn);
+        myIntent.putExtra("clean", cleanOn);
+        myIntent.putExtra("temperature", temperatureReal);
         startActivity(myIntent);
     }
 
