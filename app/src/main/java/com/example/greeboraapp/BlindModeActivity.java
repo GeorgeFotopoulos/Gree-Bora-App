@@ -29,7 +29,7 @@ import java.util.Map;
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     final int MAX_TEMP = 30, MIN_TEMP = 16;
-    int modeCount = 1, swingCount = 0, fanCount = 0, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0;
+    int modeCount = 2, swingCount = 1, fanCount = 1, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0;
     String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
     boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false;
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
@@ -417,10 +417,18 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                                 break;
                             } else if (command.get(j).toLowerCase().contains("ενημέρωση")) {
-                                if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
-                                    sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
-                                } else {
-                                    sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                if (grades.containsKey(temperatureReal)) {
+                                    if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
+                                        sentenceToSay = "Η θερμοκρασία είναι στους " + grades.get(temperatureReal) + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    } else {
+                                        sentenceToSay = "Η θερμοκρασία είναι στους " + grades.get(temperatureReal) + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    }
+                                }else{
+                                    if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
+                                        sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    } else {
+                                        sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
+                                    }
                                 }
                                 if (sleepOn) {
                                     sentenceToSay += "Η λειτουργία ύπνου είναι ενεργή..";
@@ -534,9 +542,9 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         Intent myIntent = new Intent(BlindModeActivity.this, ButtonModeActivity.class);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         myIntent.putExtra("onOff", on);
-        myIntent.putExtra("mode", modeStr);
-        myIntent.putExtra("swing", swingStr);
-        myIntent.putExtra("fan", fanStr);
+        myIntent.putExtra("mode", modeCount);
+        myIntent.putExtra("swing", swingCount);
+        myIntent.putExtra("fan", fanCount);
         myIntent.putExtra("sleep", sleepOn);
         myIntent.putExtra("timer", timerOn);
         myIntent.putExtra("clean", cleanOn);
