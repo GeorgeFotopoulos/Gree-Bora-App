@@ -77,7 +77,7 @@ public class InformationActivity extends AppCompatActivity {
                         expandableListView.collapseGroup(i);
                     }
                 }
-                if(expandableListView.isGroupExpanded(0)) {
+                if (expandableListView.isGroupExpanded(0)) {
                     sentenceToSay = "Καλωσορίσατε στη λειτουργία φωνητικών εντολών..."
                             + "Για την ενεργοποίηση του κλιματιστικού πείτε: 'Ενεργοποίηση', ή 'Άνοιξε'..."
                             + "Για την απενεργοποίηση του κλιματιστικού πείτε: 'Απενεργοποίηση', ή 'Κλείσε'..."
@@ -92,7 +92,7 @@ public class InformationActivity extends AppCompatActivity {
                             + "Για ενεργοποίηση ή απενεργοποίηση αδρανοποίησης πείτε: 'Αδρανοποίηση'..."
                             + "Για ενεργοποίηση ή απενεργοποίηση ιονισμού πείτε: 'Ιονισμός', ή 'Καθαρισμός'..."
                             + "Για ενημέρωση σχετικά με την κατάσταση του κλιματιστικού πείτε: 'Ενημέρωση'...";
-                } else if(expandableListView.isGroupExpanded(1)) {
+                } else if (expandableListView.isGroupExpanded(1)) {
                     sentenceToSay = "Καλωσορίσατε στη λειτουργία με πλήκτρα..."
                             + "Για την ενεργοποίηση και την απενεργοποίηση του κλιματιστικού πατήστε το κουμπί με την ένδειξη Power..."
                             + "Για την αύξηση της θερμοκρασίας, πατήστε το κουμπί με το πάνω βελάκι..."
@@ -112,7 +112,7 @@ public class InformationActivity extends AppCompatActivity {
         expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int groupPosition) {
-                if(!expandableListView.isGroupExpanded(0) && !expandableListView.isGroupExpanded(0)){
+                if (!expandableListView.isGroupExpanded(0) && !expandableListView.isGroupExpanded(0)) {
                     sentenceToSay = "";
                     onStopTalking();
                     sound.setImageResource(R.drawable.ic_sound_off);
@@ -170,18 +170,21 @@ public class InformationActivity extends AppCompatActivity {
                                 }
                             }).start();
 
+
                             if (firstTime) {
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 TTSs.add(TTS);
                                 firstTime = false;
                             } else {
-                                if (!TTS.isSpeaking()) {
+                                if (!TTS.isSpeaking() && (expandableListView.isGroupExpanded(0) || expandableListView.isGroupExpanded(1))) {
                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                     TTSs.add(TTS);
                                 } else {
                                     onStopTalking();
+                                    sound.setImageResource(R.drawable.ic_sound_off);
                                 }
                             }
+
                         }
                     }
                 });

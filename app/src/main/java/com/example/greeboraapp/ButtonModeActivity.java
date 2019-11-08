@@ -37,9 +37,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     String modeStr = "Ψυχρή";
     String fanStr = "Αυτόματη";
     String swingStr = "Ολική";
-    double timeStr = 0;
-    double countDown = 0;
-    boolean hideMoreOptions = false;
+    int timeStr = 0;
+    int countDown = 0;
+    boolean hideMoreOptions;
     boolean on = false;
     boolean stopped = false;
     int checkIn = 0;
@@ -90,7 +90,12 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             fanCount = intent.getExtras().getInt("fan");
             sleepOn = intent.getExtras().getBoolean("sleep");
             timerOn = intent.getExtras().getBoolean("timer");
+            if(timerOn){
+                timeStr = intent.getExtras().getInt("timerFull");
+                countDown = intent.getExtras().getInt("timerCount");
+            }
             cleanOn = intent.getExtras().getBoolean("clean");
+            hideMoreOptions = intent.getExtras().getBoolean("hide");
             temperatureShowReal = intent.getExtras().getInt("temperature");
         }
 
@@ -114,6 +119,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         final ImageView sleepDisp = findViewById(R.id.sleepShow);
         final TextView gradeDisp = findViewById(R.id.gradeShow);
         final TextView progressDisp = findViewById(R.id.txtProgress);
+        final TextView hideShow = findViewById(R.id.options);
         tempShow.setVisibility(View.VISIBLE);
         mode.setVisibility(View.INVISIBLE);
         fanDisp.setVisibility(View.INVISIBLE);
@@ -125,6 +131,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         gradeDisp.setVisibility(View.INVISIBLE);
         progressDisp.setVisibility(View.INVISIBLE);
 
+
+        if (hideMoreOptions) {
+            hideMoreOptions = false;
+        }
+        hideShow.setText("︾");
         if (!on) {
             onOff.setImageResource(R.drawable.ic_off);
             fan.setVisibility(View.GONE);
@@ -146,6 +157,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             swingDisp.setVisibility(View.VISIBLE);
             if (timerOn) {
                 timerDisp.setVisibility(View.VISIBLE);
+                timer.performClick();
             }
             if (sleepOn) {
                 sleepDisp.setVisibility(View.VISIBLE);
@@ -157,13 +169,24 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             temperature = temperatureShowReal;
         }
 
-        final TextView hideShow = findViewById(R.id.options);
         textColorAnim = ObjectAnimator.ofInt(hideShow, "textColor", Color.BLACK, Color.TRANSPARENT);
         textColorAnim.setDuration(1000);
         textColorAnim.setEvaluator(new ArgbEvaluator());
         textColorAnim.setRepeatCount(ValueAnimator.INFINITE);
         textColorAnim.setRepeatMode(ValueAnimator.REVERSE);
         textColorAnim.start();
+
+        TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    Locale localeToUse = new Locale("el_GR");
+                    TTS.setPitch((float) 0.9);
+                    TTS.setLanguage(localeToUse);
+                    TTS.speak("Λειτουργία πλήκτρων.", TextToSpeech.QUEUE_ADD, null);
+                }
+            }
+        });
 
         findViewById(R.id.onoff).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,9 +249,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 public void run() {
                                     if (System.currentTimeMillis() - firstClickDown >= 950) {
                                         canSpeak = true;
-                                        if(sentenceToSay.equals("Ενεργοποίηση") && !on ){
+                                        if (sentenceToSay.equals("Ενεργοποίηση") && !on) {
                                             TTS.speak("Απενεργοποίηση", TextToSpeech.QUEUE_ADD, null);
-                                        }else if(sentenceToSay.equals("Απενεργοποίηση") && on ){
+                                        } else if (sentenceToSay.equals("Απενεργοποίηση") && on) {
                                             TTS.speak("Ενεργοποίηση", TextToSpeech.QUEUE_ADD, null);
                                         }
                                     }
@@ -942,7 +965,13 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         myIntent.putExtra("fan", fanCount);
         myIntent.putExtra("sleep", sleepOn);
         myIntent.putExtra("timer", timerOn);
+        if(timerOn){
+            myIntent.putExtra("timerFull", timeStr);
+            myIntent.putExtra("timerCount", countDown);
+        }
         myIntent.putExtra("clean", cleanOn);
+        myIntent.putExtra("hide", hideMoreOptions);
+        myIntent.putExtra("welcome", false);
         myIntent.putExtra("temperature", temperatureShowReal);
         startActivity(myIntent);
     }

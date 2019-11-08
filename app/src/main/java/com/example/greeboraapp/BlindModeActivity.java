@@ -29,9 +29,9 @@ import java.util.Map;
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     final int MAX_TEMP = 30, MIN_TEMP = 16;
-    int modeCount = 2, swingCount = 1, fanCount = 1, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0;
+    int modeCount = 2, swingCount = 1, fanCount = 1, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0, countDown = 0;
     String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
-    boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false;
+    boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false, hideMoreOptions, welcome = true;
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
         put(1, "έναν");
         put(3, "τρεις");
@@ -60,7 +60,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
             fanCount = intent.getExtras().getInt("fan");
             sleepOn = intent.getExtras().getBoolean("sleep");
             timerOn = intent.getExtras().getBoolean("timer");
+            if(timerOn){
+                minutesToCount = intent.getExtras().getInt("timerFull");
+                countDown = intent.getExtras().getInt("timerCount");
+            }
             cleanOn = intent.getExtras().getBoolean("clean");
+            hideMoreOptions = intent.getExtras().getBoolean("hide");
+            welcome = intent.getExtras().getBoolean("welcome");
             temperatureReal = intent.getExtras().getInt("temperature");
         }
 
@@ -81,6 +87,25 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         swipeRightAnim.setRepeatCount(ValueAnimator.INFINITE);
         swipeRightAnim.setRepeatMode(ValueAnimator.REVERSE);
         swipeRightAnim.start();
+
+
+        TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    Locale localeToUse = new Locale("el_GR");
+                    TTS.setPitch((float) 0.9);
+                    TTS.setLanguage(localeToUse);
+                    if (welcome) {
+                        TTS.speak("Καλωσορίσατε!", TextToSpeech.QUEUE_ADD, null);
+                    } else {
+                        TTS.speak("Φωνητική λειτουργία", TextToSpeech.QUEUE_ADD, null);
+                    }
+
+                }
+            }
+        });
+
     }
 
     private void readCommand() {
@@ -95,6 +120,17 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                     }
                     sentenceToSay = "";
                     for (int j = 0; j < command.size(); j++) {
+                        if (command.get(j).toLowerCase().contains("λειτουργία")) {
+                            if (command.get(j).toLowerCase().contains("κουμπι") || command.get(j).toLowerCase().contains("πλήκτρ")) {
+                                onLeft();
+                                sentenceToSay = " ";
+                            }
+                        }
+                        if (command.get(j).toLowerCase().contains("οδηγίες") || command.get(j).toLowerCase().contains("βοήθεια")) {
+                            sentenceToSay = " ";
+                            onRight();
+                        }
+
                         if ((command.get(j).toLowerCase().contains("απενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("απενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
                             if (on) {
                                 on = false;
@@ -165,7 +201,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    pStatus = 0;
+                                                    pStatus = countDown;
                                                     while (pStatus <= minutesToCount) {
                                                         handler.post(new Runnable() {
                                                             @Override
@@ -423,7 +459,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η θερμοκρασία είναι στους " + grades.get(temperatureReal) + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
                                     }
-                                }else{
+                                } else {
                                     if (modeStr.equalsIgnoreCase("ανεμιστήρα") || modeStr.equalsIgnoreCase("αφύγρανσης")) {
                                         sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε λειτουργία " + modeStr + ", με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
                                     } else {
@@ -547,7 +583,12 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         myIntent.putExtra("fan", fanCount);
         myIntent.putExtra("sleep", sleepOn);
         myIntent.putExtra("timer", timerOn);
+        if(timerOn){
+            myIntent.putExtra("timerFull", minutesToCount);
+            myIntent.putExtra("timerCount", minutesToCount - pStatus);
+        }
         myIntent.putExtra("clean", cleanOn);
+        myIntent.putExtra("hide", hideMoreOptions);
         myIntent.putExtra("temperature", temperatureReal);
         startActivity(myIntent);
     }
