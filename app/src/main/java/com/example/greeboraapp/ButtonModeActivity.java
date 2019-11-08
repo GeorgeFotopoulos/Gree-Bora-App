@@ -462,6 +462,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                         final ProgressBar timer = findViewById(R.id.timerShow);
                                         timeAnim.setDuration(0);
                                         timeAnim.setRepeatCount(0);
+                                        if(){
+
+                                        }
                                         if (System.currentTimeMillis() - firstClickDown >= 2050) {
 
                                             if (timeToSet == 0)

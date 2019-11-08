@@ -205,6 +205,7 @@ public class InformationActivity extends AppCompatActivity {
         finish();
         Intent myIntent = new Intent(InformationActivity.this, BlindModeActivity.class);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        myIntent.putExtra("welcome", false);
         startActivity(myIntent);
     }
 
