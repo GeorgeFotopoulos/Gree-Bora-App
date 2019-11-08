@@ -98,6 +98,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
 
         gesture = new GestureDetector(new ButtonModeActivity.SwipeGestureDetector());
 
+        final ImageButton onOff = findViewById(R.id.onoff);
         final Button fan = findViewById(R.id.fan);
         final Button swing = findViewById(R.id.swing);
         final Button sleep = findViewById(R.id.sleep);
@@ -125,6 +126,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         progressDisp.setVisibility(View.INVISIBLE);
 
         if (!on) {
+            onOff.setImageResource(R.drawable.ic_off);
             fan.setVisibility(View.GONE);
             swing.setVisibility(View.GONE);
             sleep.setVisibility(View.GONE);
@@ -132,11 +134,13 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             temp.setVisibility(View.GONE);
             clean.setVisibility(View.GONE);
 
-            tempShow.setTextSize(50);
+            tempShow.setTextSize(80);
             tempShow.setText("OFF");
             gradeDisp.setText("");
         } else {
+            onOff.setImageResource(R.drawable.ic_on);
             mode.setVisibility(View.VISIBLE);
+            gradeDisp.setVisibility(View.VISIBLE);
             fanDisp.setVisibility(View.VISIBLE);
             fanDisp.setColorFilter(Color.parseColor("#808080"));
             swingDisp.setVisibility(View.VISIBLE);
@@ -149,6 +153,8 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             if (cleanOn) {
                 cleanDisp.setVisibility(View.VISIBLE);
             }
+            tempShow.setText(temperatureShowReal + "");
+            temperature = temperatureShowReal;
         }
 
         final TextView hideShow = findViewById(R.id.options);
@@ -172,17 +178,16 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             firstClickDown = System.currentTimeMillis();
                             if (canSpeak) {
                                 if (!on) {
-                                    on = true;
                                     sentenceToSay = "Ενεργοποίηση";
                                 } else {
-                                    on = false;
+
                                     sentenceToSay = "Απενεργοποίηση";
                                 }
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 canSpeak = false;
                             }
-                            if (on) {
-                                ImageButton onOff = findViewById(R.id.onoff);
+                            if (!on) {
+                                on = true;
                                 onOff.setImageResource(R.drawable.ic_on);
                                 tempShow.setTextSize(120);
                                 tempShow.setText(temperatureShowReal + "");
@@ -201,9 +206,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                     timerOn = false;
                                 }
                             } else {
-                                ImageButton onOff = findViewById(R.id.onoff);
+                                on = false;
                                 onOff.setImageResource(R.drawable.ic_off);
-                                tempShow.setTextSize(50);
+                                tempShow.setTextSize(80);
                                 tempShow.setText("OFF");
                                 gradeDisp.setText("");
                                 progressDisp.setVisibility(View.INVISIBLE);
@@ -221,6 +226,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 public void run() {
                                     if (System.currentTimeMillis() - firstClickDown >= 950) {
                                         canSpeak = true;
+                                        if(sentenceToSay.equals("Ενεργοποίηση") && !on ){
+                                            TTS.speak("Απενεργοποίηση", TextToSpeech.QUEUE_ADD, null);
+                                        }else if(sentenceToSay.equals("Απενεργοποίηση") && on ){
+                                            TTS.speak("Ενεργοποίηση", TextToSpeech.QUEUE_ADD, null);
+                                        }
                                     }
                                 }
                             }, 1000);
