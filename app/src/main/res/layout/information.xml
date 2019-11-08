@@ -47,6 +47,11 @@
             android:gravity="center_horizontal|top"
             android:scrollbars="vertical"
             android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/text_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
