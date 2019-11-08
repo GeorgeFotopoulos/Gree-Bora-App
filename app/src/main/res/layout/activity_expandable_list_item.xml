@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Item"
-        android:textSize="20sp" />
+        android:textSize="24sp" />
 
 </LinearLayout>
