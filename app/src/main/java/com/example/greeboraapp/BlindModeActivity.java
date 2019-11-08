@@ -43,7 +43,8 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }};
     ObjectAnimator swipeLeftAnim, swipeRightAnim;
     Handler handler = new Handler();
-    ArrayList<String> command;
+    Thread timerThread = new Thread();
+    ArrayList<String> command = new ArrayList<>();
     GestureDetector gesture;
     TextToSpeech TTS;
 
@@ -60,9 +61,11 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
             fanCount = intent.getExtras().getInt("fan");
             sleepOn = intent.getExtras().getBoolean("sleep");
             timerOn = intent.getExtras().getBoolean("timer");
-            if(timerOn){
+            if (timerOn) {
                 minutesToCount = intent.getExtras().getInt("timerFull");
                 countDown = intent.getExtras().getInt("timerCount");
+                command.add("Ενεργοποίηση Χρονοδιακόπτη");
+                readCommand();
             }
             cleanOn = intent.getExtras().getBoolean("clean");
             hideMoreOptions = intent.getExtras().getBoolean("hide");
@@ -180,28 +183,35 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             } else if (command.get(j).toLowerCase().contains("ενεργοποίησ") || command.get(j).toLowerCase().contains("άνοιξε")) {
                                 if (command.get(j).toLowerCase().contains("χρονοδιακόπτη")) {
                                     if (!timerOn) {
-                                        timerOn = true;
-                                        ArrayList<String> splitCommand = new ArrayList<>();
-                                        minutesToCount = -1;
-                                        for (int i = 0; i < command.get(j).split(" ").length; i++) {
-                                            splitCommand.add(command.get(j).split(" ")[i]);
-                                        }
-                                        for (int i = 0; i < splitCommand.size(); i++) {
+                                        if (minutesToCount == 0) {
+                                            ArrayList<String> splitCommand = new ArrayList<>();
+                                            minutesToCount = -1;
+                                            for (int i = 0; i < command.get(j).split(" ").length; i++) {
+                                                splitCommand.add(command.get(j).split(" ")[i]);
+                                            }
+                                            for (int i = 0; i < splitCommand.size(); i++) {
 
-                                            if (minutesToCount == -1) {
-                                                try {
-                                                    minutesToCount = Integer.parseInt(splitCommand.get(i));
-                                                    break;
-                                                } catch (Exception e) {
+                                                if (minutesToCount == -1) {
+                                                    try {
+                                                        minutesToCount = Integer.parseInt(splitCommand.get(i));
+                                                        pStatus = 0;
+                                                        timerOn = true;
+                                                        break;
+                                                    } catch (Exception e) {
+                                                    }
                                                 }
                                             }
+
+                                        } else {
+                                            pStatus = countDown;
+                                            TTS.speak("Το κλιματιστικό έχει ακόμα "+pStatus+" λεπτά.", TextToSpeech.QUEUE_ADD, null);
                                         }
                                         if (minutesToCount != -1) {
                                             //timerOn Start
-                                            new Thread(new Runnable() {
+                                            timerThread = new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    pStatus = countDown;
+
                                                     while (pStatus <= minutesToCount) {
                                                         handler.post(new Runnable() {
                                                             @Override
@@ -214,7 +224,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                             }
                                                         });
                                                         try {
-                                                            Thread.sleep(1000);
+                                                            timerThread.sleep(1000);
                                                         } catch (InterruptedException e) {
                                                             e.printStackTrace();
                                                         }
@@ -236,7 +246,8 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                     timerOn = false;
 
                                                 }
-                                            }).start();
+                                            });
+                                            timerThread.start();
                                             //Loader End
                                             sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
                                         }
@@ -583,9 +594,11 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         myIntent.putExtra("fan", fanCount);
         myIntent.putExtra("sleep", sleepOn);
         myIntent.putExtra("timer", timerOn);
-        if(timerOn){
+        if (timerOn) {
             myIntent.putExtra("timerFull", minutesToCount);
             myIntent.putExtra("timerCount", minutesToCount - pStatus);
+            stopped = true;
+            timerOn = true;
         }
         myIntent.putExtra("clean", cleanOn);
         myIntent.putExtra("hide", hideMoreOptions);
@@ -607,6 +620,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     @Override
     public void onInit(int status) {
     }
+
 
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_MIN_DISTANCE = 120;
