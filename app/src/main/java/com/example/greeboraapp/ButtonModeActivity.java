@@ -55,6 +55,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     boolean cleanOn = false;
     boolean tempSaid = false;
     boolean canSpeak = true;
+    boolean fakeTimer = false;
     long delayThat = 0;
     final int MAX_TEMP = 30;
     final int MIN_TEMP = 16;
@@ -72,8 +73,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     int temperature = 21;
     int tempWarn = 21;
     int temperatureShowReal = 21;
-    private TextView txtProgress;
-    private ProgressBar progressBar;
     private int pStatus = 0;
     private Handler handler = new Handler();
 
@@ -92,6 +91,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             sleepOn = intent.getExtras().getBoolean("sleep");
             timerOn = intent.getExtras().getBoolean("timer");
             if (timerOn) {
+                fakeTimer = true;
                 timeStr = intent.getExtras().getInt("timerFull");
                 countDown = intent.getExtras().getInt("timerCount");
             }
@@ -165,6 +165,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             if (cleanOn) {
                 cleanDisp.setVisibility(View.VISIBLE);
             }
+
             tempShow.setText(temperatureShowReal + "");
             temperature = temperatureShowReal;
         }
@@ -425,19 +426,19 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             if (on) {
                                 final ObjectAnimator timeAnim;
                                 timeAnim = ObjectAnimator.ofInt(tempShow, "textColor", Color.TRANSPARENT, Color.BLACK);
-                                if (timeStr != 0) {
+                                firstClickDown = System.currentTimeMillis();
+                                if (!timerOn) {
                                     if (timeStr != 0) {
+                                        progressBar.setMax(timeStr);
                                         progressBar.setProgress(timeStr - countDown);
                                         txtProgress.setText(countDown + "'");
                                         progressBar.setVisibility(View.VISIBLE);
                                         txtProgress.setVisibility(View.VISIBLE);
                                         delayThat = 0;
-                                    }
-                                } else {
-                                    delayThat = 2100;
-                                    firstClickDown = System.currentTimeMillis();
 
-                                    if (!timerOn) {
+                                    } else {
+                                        delayThat = 2100;
+
                                         if ((timeToSet + 15) <= 180) {
                                             timeToSet = timeToSet + 15;
                                             if (timeToSet > 99) {
@@ -453,30 +454,29 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                             tempShow.setText("Cancel");
                                             gradeDisp.setText("");
                                         }
-                                    } else if (timerOn) {
-                                        checkIn = 1;
                                     }
-
-                                    if (timerOn) {
-                                        timeAnim.setDuration(0);
-                                        timeAnim.setRepeatCount(0);
-                                        timeAnim.setEvaluator(new ArgbEvaluator());
-                                        timeAnim.setRepeatMode(ValueAnimator.REVERSE);
-                                        timeAnim.start();
-                                    } else {
-                                        timeAnim.setDuration(600);
-                                        timeAnim.setRepeatCount(ValueAnimator.INFINITE);
-                                        timeAnim.setEvaluator(new ArgbEvaluator());
-                                        timeAnim.setRepeatMode(ValueAnimator.REVERSE);
-                                        timeAnim.start();
-                                    }
-
+                                } else {
+                                    checkIn = 1;
                                 }
+
+                                if (timerOn) {
+                                    timeAnim.setDuration(0);
+                                    timeAnim.setRepeatCount(0);
+                                    timeAnim.setEvaluator(new ArgbEvaluator());
+                                    timeAnim.setRepeatMode(ValueAnimator.REVERSE);
+                                    timeAnim.start();
+                                } else {
+                                    timeAnim.setDuration(600);
+                                    timeAnim.setRepeatCount(ValueAnimator.INFINITE);
+                                    timeAnim.setEvaluator(new ArgbEvaluator());
+                                    timeAnim.setRepeatMode(ValueAnimator.REVERSE);
+                                    timeAnim.start();
+                                }
+
+
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        progressBar.setVisibility(View.VISIBLE);
-                                        txtProgress.setVisibility(View.VISIBLE);
                                         timeAnim.setDuration(0);
                                         timeAnim.setRepeatCount(0);
                                         if (System.currentTimeMillis() - firstClickDown >= (delayThat - 50)) {
@@ -486,8 +486,10 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
 
                                             if (timerOn) {
                                                 checkIn = 0;
-                                                timer.setVisibility(View.INVISIBLE);
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                 txtProgress.setVisibility(View.INVISIBLE);
+                                                progressBar.setVisibility(View.INVISIBLE);
                                                 tempShow.setTextSize(120);
                                                 tempShow.setText(temperatureShowReal + "");
                                                 gradeDisp.setText("℃");
@@ -496,7 +498,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                 if (timeToSet != 0 && timeStr == 0) {
                                                     sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + timeToSet + " λεπτά.";
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    timerOn = true;
                                                     tempShow.setText(temperatureShowReal + "");
                                                     gradeDisp.setText("℃");
                                                     timeStr = timeToSet;
@@ -504,7 +505,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                 } else {
                                                     pStatus = timeStr - countDown;
                                                 }
-                                                timer.setVisibility(View.VISIBLE);
+                                                timerOn = true;
                                                 timeToSet = 0;
 
                                                 //Loader Start
@@ -528,10 +529,8 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                                     if (checkIn == 1) {
                                                                         stopped = true;
                                                                         pStatus += timeStr;
-                                                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                                        progressBar.setVisibility(View.INVISIBLE);
-                                                                        txtProgress.setVisibility(View.INVISIBLE);
+                                                                    } else {
+                                                                        countDown--;
                                                                     }
                                                                 }
                                                             });
@@ -541,11 +540,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                                 e.printStackTrace();
                                                             }
                                                             pStatus++;
-                                                            countDown--;
                                                         }
                                                         mHandler.post(new Runnable() {
                                                             public void run() {
                                                                 if (!stopped) {
+
                                                                     final AlertDialog alertDialog = new AlertDialog.Builder(ButtonModeActivity.this).create();
                                                                     alertDialog.setTitle("Time's Up!");
                                                                     alertDialog.setMessage("Το κλιματιστικό κλείνει.");
@@ -576,6 +575,8 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                                 } else {
                                                                     stopped = false;
                                                                 }
+                                                                checkIn = 0;
+                                                                timerOn = false;
                                                             }
                                                         });
                                                     }
@@ -951,7 +952,8 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             }
         });
 
-        if (timerOn) {
+        if (fakeTimer) {
+            fakeTimer = false;
             timerOn = false;
             timer.callOnClick();
         }
@@ -988,13 +990,13 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         myIntent.putExtra("swing", swingCount);
         myIntent.putExtra("fan", fanCount);
         myIntent.putExtra("sleep", sleepOn);
-        myIntent.putExtra("timer", timerOn);
         if (timerOn) {
+            checkIn = 1;
             myIntent.putExtra("timerFull", timeStr);
             myIntent.putExtra("timerCount", countDown);
-            stopped = true;
-            timerOn = false;
+            timerOn = true;
         }
+        myIntent.putExtra("timer", timerOn);
         myIntent.putExtra("clean", cleanOn);
         myIntent.putExtra("hide", hideMoreOptions);
         myIntent.putExtra("welcome", false);

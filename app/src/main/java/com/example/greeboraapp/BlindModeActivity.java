@@ -31,7 +31,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     final int MAX_TEMP = 30, MIN_TEMP = 16;
     int modeCount = 2, swingCount = 1, fanCount = 1, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0, countDown = 0;
     String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
-    boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false, hideMoreOptions, welcome = true;
+    boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false, hideMoreOptions, welcome = true, leaveNow = false;
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
         put(1, "έναν");
         put(3, "τρεις");
@@ -65,6 +65,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                 minutesToCount = intent.getExtras().getInt("timerFull");
                 countDown = intent.getExtras().getInt("timerCount");
                 command.add("Ενεργοποίηση Χρονοδιακόπτη");
+                timerOn = false;
                 readCommand();
             }
             cleanOn = intent.getExtras().getBoolean("clean");
@@ -196,6 +197,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                         minutesToCount = Integer.parseInt(splitCommand.get(i));
                                                         pStatus = 0;
                                                         timerOn = true;
+                                                        countDown = minutesToCount;
                                                         break;
                                                     } catch (Exception e) {
                                                     }
@@ -203,10 +205,11 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                             }
 
                                         } else {
-                                            pStatus = countDown;
-                                            TTS.speak("Το κλιματιστικό έχει ακόμα "+pStatus+" λεπτά.", TextToSpeech.QUEUE_ADD, null);
+                                            pStatus = minutesToCount - countDown;
+                                            timerOn = true;
                                         }
                                         if (minutesToCount != -1) {
+
                                             //timerOn Start
                                             timerThread = new Thread(new Runnable() {
                                                 @Override
@@ -216,10 +219,9 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                         handler.post(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                if (!timerOn) {
+                                                                if (leaveNow) {
                                                                     stopped = true;
-                                                                    pStatus += minutesToCount;
-
+                                                                    pStatus = pStatus + minutesToCount;
                                                                 }
                                                             }
                                                         });
@@ -229,6 +231,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                             e.printStackTrace();
                                                         }
                                                         pStatus++;
+                                                        countDown--;
                                                     }
 
                                                     if (!stopped) {
@@ -593,13 +596,13 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         myIntent.putExtra("swing", swingCount);
         myIntent.putExtra("fan", fanCount);
         myIntent.putExtra("sleep", sleepOn);
-        myIntent.putExtra("timer", timerOn);
         if (timerOn) {
             myIntent.putExtra("timerFull", minutesToCount);
-            myIntent.putExtra("timerCount", minutesToCount - pStatus);
-            stopped = true;
+            myIntent.putExtra("timerCount", countDown);
+            leaveNow = true;
             timerOn = true;
         }
+        myIntent.putExtra("timer", timerOn);
         myIntent.putExtra("clean", cleanOn);
         myIntent.putExtra("hide", hideMoreOptions);
         myIntent.putExtra("temperature", temperatureReal);
