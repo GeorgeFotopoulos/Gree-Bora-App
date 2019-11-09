@@ -94,7 +94,6 @@ public class InformationActivity extends AppCompatActivity {
 
         final MyExpandableListAdapter adapter = new MyExpandableListAdapter(item);
         expandableListView.setAdapter(adapter);
-
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
