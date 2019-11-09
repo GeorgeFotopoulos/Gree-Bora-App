@@ -607,7 +607,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             }
         });
 
-
         findViewById(R.id.mode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
