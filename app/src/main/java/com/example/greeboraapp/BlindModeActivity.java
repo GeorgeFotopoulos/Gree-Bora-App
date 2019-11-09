@@ -584,6 +584,21 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         finish();
         Intent myIntent = new Intent(BlindModeActivity.this, InformationActivity.class);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        myIntent.putExtra("onOff", on);
+        myIntent.putExtra("mode", modeCount);
+        myIntent.putExtra("swing", swingCount);
+        myIntent.putExtra("fan", fanCount);
+        myIntent.putExtra("sleep", sleepOn);
+        if (timerOn) {
+            myIntent.putExtra("timerFull", minutesToCount);
+            myIntent.putExtra("timerCount", countDown);
+            leaveNow = true;
+            timerOn = true;
+        }
+        myIntent.putExtra("timer", timerOn);
+        myIntent.putExtra("clean", cleanOn);
+        myIntent.putExtra("hide", hideMoreOptions);
+        myIntent.putExtra("temperature", temperatureReal);
         startActivity(myIntent);
     }
 

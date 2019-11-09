@@ -1,8 +1,12 @@
 package com.example.greeboraapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +30,8 @@ public class InformationActivity extends AppCompatActivity {
     int animateSound = 0;
     private GestureDetector gesture;
     private Handler handler = new Handler();
+    int modeCount = 2, swingCount = 1, fanCount = 1, temperatureReal = 21, minutesToCount = 0, pStatus = 0, countDown = 0;
+    boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false, hideMoreOptions, welcome = true, leaveNow = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,27 @@ public class InformationActivity extends AppCompatActivity {
         final ExpandableListView expandableListView = findViewById(R.id.expandableListView);
         TreeMap<String, List<String>> item = new TreeMap<>();
         ArrayList<String> blindMode = new ArrayList<>();
+
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
+            on = intent.getExtras().getBoolean("onOff");
+            modeCount = intent.getExtras().getInt("mode");
+            swingCount = intent.getExtras().getInt("swing");
+            fanCount = intent.getExtras().getInt("fan");
+            sleepOn = intent.getExtras().getBoolean("sleep");
+            timerOn = intent.getExtras().getBoolean("timer");
+            if (timerOn) {
+                minutesToCount = intent.getExtras().getInt("timerFull");
+                countDown = intent.getExtras().getInt("timerCount");
+                timerOn = false;
+                onContinueTimer();
+            }
+            cleanOn = intent.getExtras().getBoolean("clean");
+            hideMoreOptions = intent.getExtras().getBoolean("hide");
+            welcome = intent.getExtras().getBoolean("welcome");
+            temperatureReal = intent.getExtras().getInt("temperature");
+        }
+
         String temp = "1. Για την ενεργοποίηση του κλιματιστικού: Ενεργοποίηση ή Άνοιξε."
                 + "\n\n2. Για την απενεργοποίηση του κλιματιστικού: Απενεργοποίηση ή Κλείσε."
                 + "\n\n3. Για την αύξηση θερμοκρασίας: Αύξησε ή Πάνω ή Ανέβα ή Ανέβασε και τον αριθμό των βαθμών."
@@ -206,6 +233,21 @@ public class InformationActivity extends AppCompatActivity {
         Intent myIntent = new Intent(InformationActivity.this, BlindModeActivity.class);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         myIntent.putExtra("welcome", false);
+        myIntent.putExtra("onOff", on);
+        myIntent.putExtra("mode", modeCount);
+        myIntent.putExtra("swing", swingCount);
+        myIntent.putExtra("fan", fanCount);
+        myIntent.putExtra("sleep", sleepOn);
+        if (timerOn) {
+            myIntent.putExtra("timerFull", minutesToCount);
+            myIntent.putExtra("timerCount", countDown);
+            leaveNow = true;
+            timerOn = true;
+        }
+        myIntent.putExtra("timer", timerOn);
+        myIntent.putExtra("clean", cleanOn);
+        myIntent.putExtra("hide", hideMoreOptions);
+        myIntent.putExtra("temperature", temperatureReal);
         startActivity(myIntent);
     }
 
@@ -223,6 +265,59 @@ public class InformationActivity extends AppCompatActivity {
         onStopTalking();
         super.onPause();
         this.finish();
+    }
+
+    private void onContinueTimer() {
+
+        pStatus = minutesToCount - countDown;
+        timerOn = true;
+
+        if (minutesToCount != -1) {
+
+            //timerOn Start
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    while (pStatus <= minutesToCount) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (leaveNow) {
+                                    stopped = true;
+                                    pStatus = pStatus + minutesToCount;
+                                }
+                            }
+                        });
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        pStatus++;
+                        countDown--;
+                    }
+
+                    if (!stopped) {
+                        TTS.speak("Το κλιματιστικό απενεργοποιήθηκε.", TextToSpeech.QUEUE_ADD, null);
+                        on = false;
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            v.vibrate(500);
+                        }
+                    } else {
+                        stopped = false;
+                    }
+                    timerOn = false;
+
+                }
+            }).start();
+
+            //Loader End
+            sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
+        }
     }
 
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
