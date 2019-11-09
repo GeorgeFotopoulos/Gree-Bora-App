@@ -159,6 +159,15 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             fanDisp.setColorFilter(Color.parseColor("#808080"));
             swingDisp.setVisibility(View.VISIBLE);
 
+            if(!hideMoreOptions){
+                fan.setVisibility(View.GONE);
+                swing.setVisibility(View.GONE);
+                sleep.setVisibility(View.GONE);
+                timer.setVisibility(View.GONE);
+                temp.setVisibility(View.GONE);
+                clean.setVisibility(View.GONE);
+            }
+
             if (sleepOn) {
                 sleepDisp.setVisibility(View.VISIBLE);
             }
