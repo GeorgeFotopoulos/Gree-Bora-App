@@ -39,7 +39,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         put(13, "δεκατρείς");
         put(14, "δεκατέσσερις");
         put(23, "εικοσιτρείς");
-        put(24, "εικοσιτέσσερις");
+        put(24, "είκοσι τέσσερις");
     }};
     ObjectAnimator swipeLeftAnim, swipeRightAnim;
     Handler handler = new Handler();

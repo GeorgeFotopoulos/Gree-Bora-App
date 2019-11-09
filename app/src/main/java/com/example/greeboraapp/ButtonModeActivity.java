@@ -69,7 +69,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         put(13, "δεκατρείς");
         put(14, "δεκατέσσερις");
         put(23, "εικοσιτρείς");
-        put(24, "εικοσιτέσσερις");
+        put(24, "είκοσι τέσσερις");
     }};
     private GestureDetector gesture;
     int temperature = 21;
@@ -301,50 +301,32 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
-                                            if (temperature - temperatureShowReal != 0) {
-                                                if (temperatureShowReal > MIN_TEMP) {
+                                        if (System.currentTimeMillis() - firstClickDown >= 1150) {
+                                            if (temperature - temperatureShowReal > 0) {
+                                                if (temperatureShowReal >= MIN_TEMP && tempWarn >= MIN_TEMP) {
                                                     temperatureDif = temperature - temperatureShowReal;
                                                     if (grades.containsKey(temperatureDif)) {
                                                         if (temperatureDif == 1) {
                                                             sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό.";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                         } else {
                                                             sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς.";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                         }
                                                     } else {
                                                         sentenceToSay = "Μείωση θερμοκρασίας κατά " + temperatureDif + " βαθμούς.";
-                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    }
-                                                    temperature = temperatureShowReal;
-                                                } else {
-                                                    if (tempWarn < 16) {
-                                                        sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MIN_TEMP + " βαθμούς.";
-                                                        tempWarn = MIN_TEMP;
-                                                    } else {
-                                                        temperatureDif = temperatureShowReal - temperature;
-                                                        if (grades.containsKey(temperatureDif)) {
-                                                            if (temperatureDif == 1) {
-                                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό.";
-                                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                            } else {
-                                                                sentenceToSay = "Μείωση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς.";
-                                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                            }
-                                                        } else {
-                                                            sentenceToSay = "Μείωση θερμοκρασίας κατά " + temperatureDif + " βαθμούς.";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-
-                                                        }
                                                     }
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    temperature = MIN_TEMP;
+                                                    temperature = temperatureShowReal;
                                                 }
+                                            }
+                                            if (tempWarn < MIN_TEMP) {
+                                                sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MIN_TEMP + " βαθμούς.";
+                                                tempWarn = MIN_TEMP;
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                temperature = MIN_TEMP;
                                             }
                                         }
                                     }
-                                }, 1000);
+                                }, 1200);
                             }
                         }
                     }
@@ -377,47 +359,32 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickUp >= 950) {
-                                            if (tempWarn - temperature != 0) {
-                                                if (temperatureShowReal < MAX_TEMP) {
+                                        if (System.currentTimeMillis() - firstClickUp >= 1150) {
+                                            if (temperatureShowReal - temperature > 0) {
+                                                if (temperatureShowReal <= MAX_TEMP && tempWarn <= MAX_TEMP) {
                                                     temperatureDif = temperatureShowReal - temperature;
                                                     if (grades.containsKey(temperatureDif)) {
                                                         if (temperatureDif == 1) {
                                                             sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                         } else {
                                                             sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς";
-                                                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                         }
                                                     } else {
                                                         sentenceToSay = "Αύξηση θερμοκρασίας κατά " + temperatureDif + " βαθμούς";
-                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    }
-                                                    temperature = temperatureShowReal;
-                                                } else {
-                                                    if (tempWarn > 30) {
-                                                        sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MAX_TEMP + " βαθμούς.";
-                                                        tempWarn = MAX_TEMP;
-                                                    } else {
-                                                        temperatureDif = temperatureShowReal - temperature;
-                                                        if (grades.containsKey(temperatureDif)) {
-                                                            if (temperatureDif == 1) {
-                                                                sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμό";
-                                                            } else {
-                                                                sentenceToSay = "Αύξηση θερμοκρασίας κατά " + grades.get(temperatureDif) + " βαθμούς";
-                                                            }
-                                                        } else {
-                                                            sentenceToSay = "Αύξηση θερμοκρασίας κατά " + temperatureDif + " βαθμούς";
-                                                        }
                                                     }
                                                     TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    temperature = MAX_TEMP;
+                                                    temperature = temperatureShowReal;
                                                 }
                                             }
+                                            if (tempWarn > MAX_TEMP) {
+                                                sentenceToSay = "Το κλιματιστικό δέχεται θερμοκρασίες μέχρι " + MAX_TEMP + " βαθμούς.";
+                                                tempWarn = MAX_TEMP;
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                temperature = MAX_TEMP;
+                                            }
                                         }
-
                                     }
-                                }, 1000);
+                                }, 1200);
                             }
                         }
                     }
