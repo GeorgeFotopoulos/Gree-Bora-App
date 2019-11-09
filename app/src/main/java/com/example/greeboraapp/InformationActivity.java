@@ -24,14 +24,14 @@ import java.util.TreeMap;
 public class InformationActivity extends AppCompatActivity {
     TextToSpeech TTS;
     ArrayList<TextToSpeech> TTSs = new ArrayList<>();
-    String sentenceToSay;
+    String sentenceToSay = "";
     boolean firstTime = true;
     boolean soundOn = false;
     int animateSound = 0;
-    private GestureDetector gesture;
-    private Handler handler = new Handler();
     int modeCount = 2, swingCount = 1, fanCount = 1, temperatureReal = 21, minutesToCount = 0, pStatus = 0, countDown = 0;
     boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false, hideMoreOptions, welcome = true, leaveNow = false;
+    private GestureDetector gesture;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,6 @@ public class InformationActivity extends AppCompatActivity {
 
         final MyExpandableListAdapter adapter = new MyExpandableListAdapter(item);
         expandableListView.setAdapter(adapter);
-
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
@@ -163,41 +162,41 @@ public class InformationActivity extends AppCompatActivity {
                             } else {
                                 soundOn = true;
                             }
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    animateSound = 0;
-                                    while (soundOn) {
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (animateSound == 0) {
-                                                    sound.setImageResource(R.drawable.ic_sound_on_1);
-                                                } else if (animateSound == 1) {
-                                                    sound.setImageResource(R.drawable.ic_sound_on_2);
-                                                } else {
-                                                    sound.setImageResource(R.drawable.ic_sound_on);
+                            if (!sentenceToSay.equals("")) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        animateSound = 0;
+                                        while (soundOn) {
+                                            handler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (animateSound == 0) {
+                                                        sound.setImageResource(R.drawable.ic_sound_on_1);
+                                                    } else if (animateSound == 1) {
+                                                        sound.setImageResource(R.drawable.ic_sound_on_2);
+                                                    } else {
+                                                        sound.setImageResource(R.drawable.ic_sound_on);
+                                                    }
+                                                    if (!TTS.isSpeaking()) {
+                                                        soundOn = false;
+                                                        sound.setImageResource(R.drawable.ic_sound_off);
+                                                    }
                                                 }
-                                                if (!TTS.isSpeaking()) {
-                                                    soundOn = false;
-                                                    sound.setImageResource(R.drawable.ic_sound_off);
+                                            });
+                                            try {
+                                                Thread.sleep(1000);
+                                                animateSound++;
+                                                if (animateSound == 3) {
+                                                    animateSound = 0;
                                                 }
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
                                             }
-                                        });
-                                        try {
-                                            Thread.sleep(1000);
-                                            animateSound++;
-                                            if (animateSound == 3) {
-                                                animateSound = 0;
-                                            }
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
                                         }
                                     }
-                                }
-                            }).start();
-
-
+                                }).start();
+                            }
                             if (firstTime) {
                                 TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                 TTSs.add(TTS);
@@ -211,7 +210,6 @@ public class InformationActivity extends AppCompatActivity {
                                     sound.setImageResource(R.drawable.ic_sound_off);
                                 }
                             }
-
                         }
                     }
                 });
@@ -268,17 +266,14 @@ public class InformationActivity extends AppCompatActivity {
     }
 
     private void onContinueTimer() {
-
         pStatus = minutesToCount - countDown;
         timerOn = true;
 
         if (minutesToCount != -1) {
 
-            //timerOn Start
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     while (pStatus <= minutesToCount) {
                         handler.post(new Runnable() {
                             @Override
@@ -314,9 +309,6 @@ public class InformationActivity extends AppCompatActivity {
 
                 }
             }).start();
-
-            //Loader End
-            sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
         }
     }
 
