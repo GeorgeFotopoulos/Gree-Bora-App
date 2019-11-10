@@ -46,7 +46,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     int fanCount = 1;
     int swingCount = 1;
     int modeCount = 2;
-    int temperatureDif = 0;
     int timeToSet = 0;
     long firstClickUp = 0;
     long firstClickDown = 0;
@@ -72,6 +71,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         put(24, "είκοσι τέσσερις");
     }};
     private GestureDetector gesture;
+    int temperatureDif = 0;
     int temperature = 21;
     int tempWarn = 21;
     int temperatureShowReal = 21;
@@ -215,6 +215,10 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             if (canSpeak) {
                                 if (!on) {
                                     sentenceToSay = "Ενεργοποίηση";
+                                    temperatureDif = 0;
+                                    temperature = 21;
+                                    tempWarn = 21;
+                                    temperatureShowReal = 21;
                                 } else {
                                     sentenceToSay = "Απενεργοποίηση";
                                 }
