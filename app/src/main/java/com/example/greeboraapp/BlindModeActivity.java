@@ -560,6 +560,11 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     @Override
+    public void onBackPressed(){
+        this.finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
