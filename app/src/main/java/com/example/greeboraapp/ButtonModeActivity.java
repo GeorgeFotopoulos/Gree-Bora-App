@@ -140,6 +140,8 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             hideMoreOptions = false;
         }
         hideShow.setText("︾");
+        mode.setTextColor(Color.BLACK);
+        fanDisp.setColorFilter(Color.BLACK);
 
         if (!on) {
             onOff.setImageResource(R.drawable.ic_off);
@@ -158,7 +160,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             mode.setVisibility(View.VISIBLE);
             gradeDisp.setVisibility(View.VISIBLE);
             fanDisp.setVisibility(View.VISIBLE);
-            fanDisp.setColorFilter(Color.parseColor("#808080"));
             swingDisp.setVisibility(View.VISIBLE);
 
             if (!hideMoreOptions) {
