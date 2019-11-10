@@ -991,7 +991,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         myIntent.putExtra("clean", cleanOn);
         myIntent.putExtra("hide", hideMoreOptions);
         myIntent.putExtra("welcome", false);
-        myIntent.putExtra("temperature", temperatureShowReal);
+        myIntent.putExtra("temperature", temperature);
         startActivity(myIntent);
     }
 

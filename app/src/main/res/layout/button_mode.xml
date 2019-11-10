@@ -209,7 +209,7 @@
                     android:layout_toLeftOf="@+id/up"
                     android:gravity="center"
                     android:text="MODE"
-                    android:textSize="54dp"
+                    android:textSize="50dp"
                     app:layout_constraintEnd_toStartOf="@+id/onoff"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/down" />
