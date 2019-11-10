@@ -1,6 +1,5 @@
 package com.example.greeboraapp;
 
-
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -32,6 +31,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class ButtonModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+    final int MAX_TEMP = 30;
+    final int MIN_TEMP = 16;
     TextToSpeech TTS;
     String sentenceToSay;
     String modeStr = "Ψυχρή";
@@ -46,6 +47,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     int fanCount = 1;
     int swingCount = 1;
     int modeCount = 2;
+    int temperatureDif = 0;
     int timeToSet = 0;
     long firstClickUp = 0;
     long firstClickDown = 0;
@@ -58,8 +60,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     boolean fakeTimer = false;
     boolean closeNow = false;
     long delayThat = 0;
-    final int MAX_TEMP = 30;
-    final int MIN_TEMP = 16;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
         put(1, "έναν");
@@ -70,42 +70,17 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         put(23, "εικοσιτρείς");
         put(24, "είκοσι τέσσερις");
     }};
-    private GestureDetector gesture;
-    int temperatureDif = 0;
     int temperature = 21;
     int tempWarn = 21;
     int temperatureShowReal = 21;
+    private GestureDetector gesture;
     private int pStatus = 0;
     private Handler handler = new Handler();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.button_mode);
-        on = false;
-        stopped = false;
-        timeStr = 0;
-        countDown = 0;
-        temperatureDif = 0;
-        temperature = 21;
-        tempWarn = 21;
-        temperatureShowReal = 21;
-        checkIn = 0;
-        fanCount = 1;
-        swingCount = 1;
-        modeCount = 2;
-        timeToSet = 0;
-        modeStr = "Ψυχρή";
-        fanStr = "Αυτόματη";
-        swingStr = "Ολική";
-        sleepOn = false;
-        timerOn = false;
-        cleanOn = false;
-        tempSaid = false;
-        canSpeak = true;
-        fakeTimer = false;
-        closeNow = false;
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -126,9 +101,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         }
 
         final Handler mHandler = new Handler();
-
         gesture = new GestureDetector(new ButtonModeActivity.SwipeGestureDetector());
-
         final ImageButton onOff = findViewById(R.id.onoff);
         final Button fan = findViewById(R.id.fan);
         final Button swing = findViewById(R.id.swing);
@@ -158,14 +131,12 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         txtProgress.setVisibility(View.INVISIBLE);
         txtProgress.setVisibility(View.INVISIBLE);
 
-
         if (hideMoreOptions) {
             hideMoreOptions = false;
         }
         hideShow.setText("︾");
         mode.setTextColor(Color.BLACK);
         fanDisp.setColorFilter(Color.BLACK);
-
         if (!on) {
             onOff.setImageResource(R.drawable.ic_off);
             fan.setVisibility(View.GONE);
@@ -174,6 +145,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             timer.setVisibility(View.GONE);
             temp.setVisibility(View.GONE);
             clean.setVisibility(View.GONE);
+
             tempShow.setTextSize(80);
             tempShow.setText("OFF");
             gradeDisp.setText("");
@@ -183,7 +155,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             gradeDisp.setVisibility(View.VISIBLE);
             fanDisp.setVisibility(View.VISIBLE);
             swingDisp.setVisibility(View.VISIBLE);
-
             if (!hideMoreOptions) {
                 fan.setVisibility(View.GONE);
                 swing.setVisibility(View.GONE);
@@ -192,14 +163,12 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                 temp.setVisibility(View.GONE);
                 clean.setVisibility(View.GONE);
             }
-
             if (sleepOn) {
                 sleepDisp.setVisibility(View.VISIBLE);
             }
             if (cleanOn) {
                 cleanDisp.setVisibility(View.VISIBLE);
             }
-
             tempShow.setText(temperatureShowReal + "");
             temperature = temperatureShowReal;
         }
@@ -378,7 +347,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                     temperatureShowReal = MAX_TEMP;
                                     tempShow.setText(temperatureShowReal + "");
                                 }
-
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
@@ -414,7 +382,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                 });
             }
         });
-
 
         findViewById(R.id.timer).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -477,8 +444,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                     timeAnim.setRepeatMode(ValueAnimator.REVERSE);
                                     timeAnim.start();
                                 }
-
-
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
@@ -852,7 +817,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             }
         });
 
-
         findViewById(R.id.temp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -969,10 +933,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             timerOn = false;
             timer.callOnClick();
         }
-
-
     }
-
 
     public void getSpeechInput(View view) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -1025,7 +986,8 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     }
 
     @Override
-    public void onBackPressed(){
+    public void onStop() {
+        super.onStop();
         this.finish();
     }
 
@@ -1033,7 +995,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     public void onInit(int status) {
     }
 
-    // Private class for gestures
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_MIN_DISTANCE = 120;
         private static final int SWIPE_MAX_OFF_PATH = 200;
