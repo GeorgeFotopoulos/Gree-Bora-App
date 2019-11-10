@@ -50,6 +50,10 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     long firstClickUp = 0;
     long firstClickDown = 0;
     long firstClickDownTimer = 0;
+    long firstClickDownSleep = 0;
+    long firstClickDownClean = 0;
+    long firstClickDownSwing = 0;
+    long firstClickDownFan = 0;
     boolean sleepOn = false;
     boolean timerOn = false;
     boolean cleanOn = false;
@@ -82,7 +86,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.button_mode);
-
 
         Intent intent = getIntent();
         if (intent.hasExtra("temperature")) {
@@ -694,7 +697,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-                                firstClickDown = System.currentTimeMillis();
+                                firstClickDownFan = System.currentTimeMillis();
                                 fanCount++;
                                 if (fanCount == 5) {
                                     fanCount = 1;
@@ -716,7 +719,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        if (System.currentTimeMillis() - firstClickDownFan >= 950) {
                                             if (fanCount == 2) {
                                                 sentenceToSay = "Η ένταση του ανεμιστήρα, ρυθμίστηκε σε χαμηλή.";
                                             } else if (fanCount == 3) {
@@ -748,7 +751,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-                                firstClickDown = System.currentTimeMillis();
+                                firstClickDownSwing = System.currentTimeMillis();
                                 swingCount++;
                                 if (swingCount == 5) {
                                     swingCount = 1;
@@ -769,7 +772,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        if (System.currentTimeMillis() - firstClickDownSwing >= 950) {
 
                                             if (swingCount == 2) {
                                                 sentenceToSay = "Η ανάκλιση ρυθμίστηκε σε χαμηλή";
@@ -803,11 +806,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-                                firstClickDown = System.currentTimeMillis();
+                                firstClickDownSleep = System.currentTimeMillis();
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        if (System.currentTimeMillis() - firstClickDownSleep >= 950) {
                                             if (sleepOn) {
                                                 sentenceToSay = "Η λειτουργία ύπνου απενεργοποιήθηκε.";
                                                 sleepDisp.setVisibility(View.INVISIBLE);
@@ -915,11 +918,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);
                             if (on) {
-                                firstClickDown = System.currentTimeMillis();
+                                firstClickDownClean = System.currentTimeMillis();
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
                                     public void run() {
-                                        if (System.currentTimeMillis() - firstClickDown >= 950) {
+                                        if (System.currentTimeMillis() - firstClickDownClean >= 950) {
 
                                             if (cleanOn) {
                                                 sentenceToSay = "Η λειτουργία καθαρισμού απενεργοποιήθηκε.";
