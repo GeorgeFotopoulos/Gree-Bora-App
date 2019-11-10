@@ -53,7 +53,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         setContentView(R.layout.blind_mode);
 
         Intent intent = getIntent();
-        if (intent.getExtras() != null) {
+        if (intent.hasExtra("temperature")) {
             on = intent.getExtras().getBoolean("onOff");
             modeCount = intent.getExtras().getInt("mode");
             swingCount = intent.getExtras().getInt("swing");
