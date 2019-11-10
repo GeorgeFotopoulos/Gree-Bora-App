@@ -1007,6 +1007,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     }
 
     @Override
+    public void onBackPressed(){
+        this.finish();
+    }
+
+    @Override
     public void onInit(int status) {
     }
 
