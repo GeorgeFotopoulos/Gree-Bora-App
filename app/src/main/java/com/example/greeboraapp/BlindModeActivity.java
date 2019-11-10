@@ -27,11 +27,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public class BlindModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
-
     final int MAX_TEMP = 30, MIN_TEMP = 16;
     int modeCount = 2, swingCount = 1, fanCount = 1, temperatureShow = 0, temperatureReal = 21, minutesToCount = 0, pStatus = 0, countDown = 0;
-    String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
     boolean timerOn = false, sleepOn = false, cleanOn = false, on = false, stopped = false, hideMoreOptions, welcome = true, leaveNow = false;
+    String sentenceToSay, modeStr = "ψυχρή", swingStr = "ολική", fanStr = "αυτόματη";
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
         put(1, "έναν");
         put(3, "τρεις");
@@ -92,7 +91,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
         swipeRightAnim.setRepeatMode(ValueAnimator.REVERSE);
         swipeRightAnim.start();
 
-
         TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -109,7 +107,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                 }
             }
         });
-
     }
 
     private void readCommand() {
@@ -247,11 +244,9 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                         stopped = false;
                                                     }
                                                     timerOn = false;
-
                                                 }
                                             });
                                             timerThread.start();
-                                            //Loader End
                                             sentenceToSay = "Η λειτουργία χρονοδιακόπτη ενεργοποιήθηκε για " + minutesToCount + " λεπτά";
                                         }
                                     } else {
@@ -313,7 +308,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MAX_TEMP + " βαθμούς Κελσίου, καθώς είναι το ανώτατο όριο.";
                                     break;
                                 }
-
                             } else if (command.get(j).toLowerCase().contains("μείωσ") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) {
                                 ArrayList<String> splitCommand = new ArrayList<>();
                                 temperatureShow = -1;
@@ -352,7 +346,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MIN_TEMP + " βαθμούς Κελσίου, καθώς είναι το κατώτατο όριο.";
                                     break;
                                 }
-
                             } else if (command.get(j).toLowerCase().contains("λειτουργία")) {
                                 if (command.get(j).toLowerCase().contains("αυτόματ")) {
                                     if (modeCount != 1) {
@@ -560,11 +553,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     }
 
     @Override
-    public void onBackPressed(){
-        this.finish();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -583,6 +571,12 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
             return true;
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        this.finish();
     }
 
     private void onRight() {
@@ -643,7 +637,6 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
     @Override
     public void onInit(int status) {
     }
-
 
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_MIN_DISTANCE = 120;

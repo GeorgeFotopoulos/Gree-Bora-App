@@ -312,6 +312,12 @@ public class InformationActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        this.finish();
+    }
+
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_MIN_DISTANCE = 120;
         private static final int SWIPE_MAX_OFF_PATH = 200;
