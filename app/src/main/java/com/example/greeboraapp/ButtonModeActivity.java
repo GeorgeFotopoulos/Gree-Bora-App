@@ -151,7 +151,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
             timer.setVisibility(View.GONE);
             temp.setVisibility(View.GONE);
             clean.setVisibility(View.GONE);
-
             tempShow.setTextSize(80);
             tempShow.setText("OFF");
             gradeDisp.setText("");
