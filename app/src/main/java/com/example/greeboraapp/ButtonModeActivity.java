@@ -83,6 +83,29 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.button_mode);
+        on = false;
+        stopped = false;
+        timeStr = 0;
+        countDown = 0;
+        temperatureDif = 0;
+        temperature = 21;
+        tempWarn = 21;
+        temperatureShowReal = 21;
+        checkIn = 0;
+        fanCount = 1;
+        swingCount = 1;
+        modeCount = 2;
+        timeToSet = 0;
+        modeStr = "Ψυχρή";
+        fanStr = "Αυτόματη";
+        swingStr = "Ολική";
+        sleepOn = false;
+        timerOn = false;
+        cleanOn = false;
+        tempSaid = false;
+        canSpeak = true;
+        fakeTimer = false;
+        closeNow = false;
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -214,10 +237,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                             if (canSpeak) {
                                 if (!on) {
                                     sentenceToSay = "Ενεργοποίηση";
-                                    temperatureDif = 0;
-                                    temperature = 21;
-                                    tempWarn = 21;
-                                    temperatureShowReal = 21;
                                 } else {
                                     sentenceToSay = "Απενεργοποίηση";
                                 }
