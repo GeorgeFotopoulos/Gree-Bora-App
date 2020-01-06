@@ -132,7 +132,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                             onRight();
                         }
 
-                        if ((command.get(j).toLowerCase().contains("απενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("απενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
+                        if ((command.get(j).toLowerCase().contains("απενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("απενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ")) || ((command.get(j).toLowerCase().contains("κλείσ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("κλείσ") && command.get(j).toLowerCase().contains("κλιματιστικ")))) {
                             if (on) {
                                 on = false;
                                 sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
@@ -140,25 +140,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
                             }
                             command.removeAll(command);
-                        } else if ((command.get(j).toLowerCase().contains("ενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("ενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
-                            if (!on) {
-                                on = true;
-                                sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
-                            } else {
-                                sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη σε λειτουργία.";
-                            }
-                            command.removeAll(command);
-                        }
-
-                        if ((command.get(j).toLowerCase().contains("κλείσ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("κλείσ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
-                            if (on) {
-                                on = false;
-                                sentenceToSay = "Το κλιματιστικό απενεργοποιήθηκε.";
-                            } else {
-                                sentenceToSay = "Το κλιματιστικό βρίσκεται ήδη εκτός λειτουργίας.";
-                            }
-                            command.removeAll(command);
-                        } else if ((command.get(j).toLowerCase().contains("άνοιξ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("άνοιξ") && command.get(j).toLowerCase().contains("κλιματιστικ"))) {
+                        } else if ((command.get(j).toLowerCase().contains("ενεργοποίησ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("ενεργοποίησ") && command.get(j).toLowerCase().contains("κλιματιστικ")) || ((command.get(j).toLowerCase().contains("άνοιξ") && !command.get(j).toLowerCase().contains(" ")) || (command.get(j).toLowerCase().contains("άνοιξ") && command.get(j).toLowerCase().contains("κλιματιστικ")))) {
                             if (!on) {
                                 on = true;
                                 sentenceToSay = "Το κλιματιστικό ενεργοποιήθηκε.";
