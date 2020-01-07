@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class ButtonModeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+    final int MAX_TEMP = 30;
+    final int MIN_TEMP = 16;
     TextToSpeech TTS;
     String sentenceToSay;
     String modeStr = "Ψυχρή";
@@ -62,8 +64,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     boolean fakeTimer = false;
     boolean closeNow = false;
     long delayThat = 0;
-    final int MAX_TEMP = 30;
-    final int MIN_TEMP = 16;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
         put(1, "έναν");
@@ -74,11 +74,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         put(23, "εικοσιτρείς");
         put(24, "είκοσι τέσσερις");
     }};
-    private GestureDetector gesture;
     int temperatureDif = 0;
     int temperature = 21;
     int tempWarn = 21;
     int temperatureShowReal = 21;
+    private GestureDetector gesture;
     private int pStatus = 0;
     private Handler handler = new Handler();
 
@@ -536,8 +536,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                         }
                                                         mHandler.post(new Runnable() {
                                                             public void run() {
-                                                                if (!stopped) {
-
+                                                                if (!stopped && timerOn) {
                                                                     final AlertDialog alertDialog = new AlertDialog.Builder(ButtonModeActivity.this).create();
                                                                     alertDialog.setTitle("Time's Up!");
                                                                     alertDialog.setMessage("Το κλιματιστικό κλείνει.");
@@ -1005,7 +1004,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         this.finish();
     }
 

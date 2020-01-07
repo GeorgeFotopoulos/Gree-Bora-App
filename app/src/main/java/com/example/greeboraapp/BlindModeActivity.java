@@ -232,7 +232,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                         countDown--;
                                                     }
 
-                                                    if (!stopped) {
+                                                    if (!stopped && timerOn) {
                                                         TTS.speak("Το κλιματιστικό απενεργοποιήθηκε.", TextToSpeech.QUEUE_ADD, null);
                                                         on = false;
                                                         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -241,6 +241,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                                         } else {
                                                             v.vibrate(500);
                                                         }
+
                                                     } else {
                                                         stopped = false;
                                                     }
@@ -474,21 +475,18 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                         sentenceToSay = "Η θερμοκρασία είναι στους " + temperatureReal + " βαθμούς Κελσίου, το κλιματιστικό βρίσκεται σε " + modeStr + " λειτουργία, με " + fanStr + " ένταση ανεμιστήρα και " + swingStr + " ανάκλιση..";
                                     }
                                 }
-                                if (sleepOn) {
+                                if (sleepOn && !cleanOn) {
                                     sentenceToSay += "Η λειτουργία ύπνου είναι ενεργή..";
-                                }
-                                if (cleanOn) {
-                                    if (sleepOn) {
-                                        sentenceToSay += "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές..";
-                                    } else {
-                                        sentenceToSay += "Η λειτουργία ιονισμού είναι ενεργή..";
-                                    }
+                                } else if (!sleepOn && cleanOn) {
+                                    sentenceToSay += "Η λειτουργία ιονισμού είναι ενεργή..";
+                                } else if (sleepOn && cleanOn) {
+                                    sentenceToSay += "Οι λειτουργίες ύπνου και ιονισμού είναι ενεργές..";
                                 }
                                 if (timerOn) {
                                     if (!sleepOn && !cleanOn) {
-                                        sentenceToSay += "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα..";
+                                        sentenceToSay += "Ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου " + countDown + " λεπτά ακόμα..";
                                     } else {
-                                        sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου 5 λεπτά ακόμα..";
+                                        sentenceToSay += " και ο χρονοδιακόπτης έχει ρυθμιστεί για περίπου " + countDown + " λεπτά ακόμα..";
                                     }
                                 }
                                 break;
