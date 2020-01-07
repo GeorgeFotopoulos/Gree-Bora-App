@@ -87,24 +87,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.button_mode);
 
-        Intent intent = getIntent();
-        if (intent.hasExtra("temperature")) {
-            on = intent.getExtras().getBoolean("onOff");
-            modeCount = intent.getExtras().getInt("mode");
-            swingCount = intent.getExtras().getInt("swing");
-            fanCount = intent.getExtras().getInt("fan");
-            sleepOn = intent.getExtras().getBoolean("sleep");
-            timerOn = intent.getExtras().getBoolean("timer");
-            if (timerOn) {
-                fakeTimer = true;
-                timeStr = intent.getExtras().getInt("timerFull");
-                countDown = intent.getExtras().getInt("timerCount");
-            }
-            cleanOn = intent.getExtras().getBoolean("clean");
-            hideMoreOptions = intent.getExtras().getBoolean("hide");
-            temperatureShowReal = intent.getExtras().getInt("temperature");
-        }
-
         final Handler mHandler = new Handler();
 
         gesture = new GestureDetector(new ButtonModeActivity.SwipeGestureDetector());
@@ -126,6 +108,75 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
         final ImageView sleepDisp = findViewById(R.id.sleepShow);
         final TextView gradeDisp = findViewById(R.id.gradeShow);
         final TextView hideShow = findViewById(R.id.options);
+
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("temperature")) {
+            on = intent.getExtras().getBoolean("onOff");
+            modeCount = intent.getExtras().getInt("mode");
+
+            if (modeCount == 2) {
+                mode.setText("❆");
+                modeStr = "Ψυχρή";
+            } else if (modeCount == 3) {
+                mode.setText("⛆");
+                modeStr = "Αφύγρανση";
+            } else if (modeCount == 4) {
+                mode.setText("✤");
+                modeStr = "Ανεμιστήρα";
+            } else if (modeCount == 5) {
+                mode.setText("☼");
+                modeStr = "Θερμή";
+            } else {
+                mode.setText("A");
+                modeStr = "Αυτόματη";
+            }
+
+            swingCount = intent.getExtras().getInt("swing");
+
+            if (swingCount == 1) {
+                swingDisp.setImageResource(R.drawable.fan_swing_auto);
+                swingStr = "ολική";
+            } else if (swingCount == 2) {
+                swingDisp.setImageResource(R.drawable.fan_swing_down);
+                swingStr = "χαμηλή";
+            } else if (swingCount == 3) {
+                swingDisp.setImageResource(R.drawable.fan_swing_mid);
+                swingStr = "μεσαία";
+            } else if (swingCount == 4) {
+                swingDisp.setImageResource(R.drawable.fan_swing_up);
+                swingStr = "υψηλή";
+            }
+
+            fanCount = intent.getExtras().getInt("fan");
+
+            if (fanCount == 1) {
+                fanDisp.setImageResource(R.drawable.volume_auto);
+                fanStr = "αυτόματη";
+            } else if (fanCount == 2) {
+                fanDisp.setImageResource(R.drawable.volume_low);
+                fanStr = "χαμηλή";
+            } else if (fanCount == 3) {
+                fanDisp.setImageResource(R.drawable.volume_mid);
+                fanStr = "μεσαία";
+            } else {
+                fanDisp.setImageResource(R.drawable.volume_full);
+                fanStr = "υψηλή";
+            }
+
+            sleepOn = intent.getExtras().getBoolean("sleep");
+            timerOn = intent.getExtras().getBoolean("timer");
+            if (timerOn) {
+                fakeTimer = true;
+                timeStr = intent.getExtras().getInt("timerFull");
+                countDown = intent.getExtras().getInt("timerCount");
+            }
+            cleanOn = intent.getExtras().getBoolean("clean");
+            hideMoreOptions = intent.getExtras().getBoolean("hide");
+            temperatureShowReal = intent.getExtras().getInt("temperature");
+        }
+
+
         tempShow.setVisibility(View.VISIBLE);
         mode.setVisibility(View.INVISIBLE);
         fanDisp.setVisibility(View.INVISIBLE);
@@ -713,7 +764,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                 } else {
                                     fanDisp.setImageResource(R.drawable.volume_auto);
                                     fanStr = "αυτόματη";
-
                                 }
                                 Handler h = new Handler();
                                 h.postDelayed(new Runnable() {
