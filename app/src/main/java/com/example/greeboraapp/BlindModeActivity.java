@@ -380,7 +380,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     } else {
                                         sentenceToSay = "Η λειτουργία ανεμιστήρα είναι ηδη ενεργή.";
                                     }
-                                } else if (command.get(j).toLowerCase().contains("θερμή")) {
+                                } else if (command.get(j).toLowerCase().contains("θερμή") || command.get(j).toLowerCase().contains("θέρμ")) {
                                     if (modeCount != 5) {
                                         modeStr = "θερμή";
                                         sentenceToSay = "Θερμή λειτουργία ενεργή.";
@@ -390,7 +390,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     }
                                 }
                                 break;
-                            } else if (command.get(j).toLowerCase().contains("ανάκλιση")) {
+                            } else if (command.get(j).toLowerCase().contains("ανάκλιση") || command.get(j).toLowerCase().contains("ανάκληση")) {
                                 if (command.get(j).toLowerCase().contains("ολικ")) {
                                     if (swingCount != 1) {
                                         swingStr = "ολική";
