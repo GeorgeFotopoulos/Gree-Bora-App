@@ -271,7 +271,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     }
                                     break;
                                 }
-                            } else if (command.get(j).toLowerCase().contains("αύξησ") || command.get(j).toLowerCase().contains("ανέβα") || command.get(j).toLowerCase().contains("πάνω")) {
+                            } else if ((command.get(j).toLowerCase().contains("αύξησ") || command.get(j).toLowerCase().contains("ανέβα") || command.get(j).toLowerCase().contains("πάνω")) && !command.get(j).toLowerCase().contains("ανάκληση") && !command.get(j).toLowerCase().contains("ανάκλιση")) {
                                 ArrayList<String> splitCommand = new ArrayList<>();
                                 temperatureShow = -1;
                                 for (int i = 0; i < command.get(j).split(" ").length; i++) {
@@ -309,7 +309,7 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                     sentenceToSay = "Η θερμοκρασία ρυθμίστηκε στους " + MAX_TEMP + " βαθμούς Κελσίου, καθώς είναι το ανώτατο όριο.";
                                     break;
                                 }
-                            } else if (command.get(j).toLowerCase().contains("μείωσ") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) {
+                            } else if ((command.get(j).toLowerCase().contains("μείωσ") || command.get(j).toLowerCase().contains("κατέβα") || command.get(j).toLowerCase().contains("κάτω")) && !command.get(j).toLowerCase().contains("ανάκληση") && !command.get(j).toLowerCase().contains("ανάκλιση")) {
                                 ArrayList<String> splitCommand = new ArrayList<>();
                                 temperatureShow = -1;
                                 for (int i = 0; i < command.get(j).split(" ").length; i++) {
