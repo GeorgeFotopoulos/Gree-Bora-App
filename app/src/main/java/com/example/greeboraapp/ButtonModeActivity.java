@@ -454,7 +454,6 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                     @Override
                     public void onInit(int status) {
                         if (status != TextToSpeech.ERROR) {
-                            // replace this Locale with whatever you want
                             Locale localeToUse = new Locale("el_GR");
                             TTS.setLanguage(localeToUse);
                             TTS.setPitch((float) 0.9);

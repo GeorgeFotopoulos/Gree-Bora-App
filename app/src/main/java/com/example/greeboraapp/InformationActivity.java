@@ -266,54 +266,65 @@ public class InformationActivity extends AppCompatActivity {
     }
 
     private void onContinueTimer() {
-        pStatus = minutesToCount - countDown;
-        timerOn = true;
+        TTS = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    // replace this Locale with whatever you want
+                    Locale localeToUse = new Locale("el_GR");
+                    TTS.setLanguage(localeToUse);
+                    TTS.setPitch((float) 0.9);
+                    pStatus = minutesToCount - countDown;
+                    timerOn = true;
 
-        if (minutesToCount != -1) {
+                    if (minutesToCount != -1) {
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (pStatus <= minutesToCount) {
-                        handler.post(new Runnable() {
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                if (leaveNow) {
-                                    stopped = true;
-                                    pStatus = pStatus + minutesToCount;
+                                while (pStatus <= minutesToCount) {
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (leaveNow) {
+                                                stopped = true;
+                                                pStatus = pStatus + minutesToCount;
+                                            }
+                                        }
+                                    });
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    pStatus++;
+                                    countDown--;
                                 }
+
+                                if (!stopped) {
+                                    TTS.speak("Το κλιματιστικό απενεργοποιήθηκε.", TextToSpeech.QUEUE_ADD, null);
+                                    on = false;
+                                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                                    } else {
+                                        v.vibrate(500);
+                                    }
+                                } else {
+                                    stopped = false;
+                                }
+                                timerOn = false;
+
                             }
-                        });
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        pStatus++;
-                        countDown--;
+                        }).start();
                     }
-
-                    if (!stopped) {
-                        TTS.speak("Το κλιματιστικό απενεργοποιήθηκε.", TextToSpeech.QUEUE_ADD, null);
-                        on = false;
-                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                        } else {
-                            v.vibrate(500);
-                        }
-                    } else {
-                        stopped = false;
-                    }
-                    timerOn = false;
-
                 }
-            }).start();
-        }
+            }
+        });
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         this.finish();
     }
