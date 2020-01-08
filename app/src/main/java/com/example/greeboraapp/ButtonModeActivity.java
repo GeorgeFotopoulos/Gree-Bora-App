@@ -63,6 +63,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
     boolean canSpeak = true;
     boolean fakeTimer = false;
     boolean closeNow = false;
+    boolean cancel = false;
     long delayThat = 0;
     ObjectAnimator textColorAnim;
     HashMap<Integer, String> grades = new HashMap<Integer, String>() {{
@@ -482,11 +483,13 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                             }
                                             tempShow.setText(timeToSet + "");
                                             gradeDisp.setText("'");
+                                            cancel = false;
                                         } else {
                                             timeToSet = 0;
                                             tempShow.setTextSize(50);
                                             tempShow.setText("Cancel");
                                             gradeDisp.setText("");
+                                            cancel = true;
                                         }
                                     }
                                 } else {
@@ -516,19 +519,24 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                         timeAnim.setRepeatCount(0);
                                         if (System.currentTimeMillis() - firstClickDownTimer >= (delayThat - 50)) {
 
-                                            if (timeToSet == 0 && timeStr == 0)
+                                            if (timeToSet == 0 && timeStr == 0 && !cancel)
                                                 timerOn = true;
+
+                                            if (cancel) {
+                                                sentenceToSay = "Η λειτουργία χρονοδιακόπτη ακυρώθηκε.";
+                                                TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                txtProgress.setVisibility(View.INVISIBLE);
+                                                progressBar.setVisibility(View.INVISIBLE);
+                                                tempShow.setTextSize(110);
+                                                tempShow.setText(temperatureShowReal + "");
+                                                gradeDisp.setText("℃");
+                                            }
 
                                             if (timerOn) {
                                                 checkIn = 0;
                                                 if (!closeNow) {
-                                                    if (!(tempShow.getText()).equals("Cancel")) {
-                                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    } else {
-                                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη ακυρώθηκε.";
-                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
-                                                    }
+                                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                                                     tempShow.setTextSize(110);
                                                     tempShow.setText(temperatureShowReal + "");
                                                     gradeDisp.setText("℃");
@@ -558,8 +566,11 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                 timeToSet = 0;
 
                                                 //Loader Start
-                                                txtProgress.setVisibility(View.VISIBLE);
-                                                progressBar.setVisibility(View.VISIBLE);
+                                                if (!cancel) {
+                                                    txtProgress.setVisibility(View.VISIBLE);
+                                                    progressBar.setVisibility(View.VISIBLE);
+                                                }
+
                                                 new Thread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -591,7 +602,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                         }
                                                         mHandler.post(new Runnable() {
                                                             public void run() {
-                                                                if (!stopped && countDown <= 0) {
+                                                                if (!stopped && countDown <= 0 && !cancel) {
                                                                     final AlertDialog alertDialog = new AlertDialog.Builder(ButtonModeActivity.this).create();
                                                                     alertDialog.setTitle("Time's Up!");
                                                                     alertDialog.setMessage("Το κλιματιστικό κλείνει.");
@@ -621,6 +632,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                                         v.vibrate(500);
                                                                     }
                                                                 } else {
+                                                                    cancel = false;
                                                                     stopped = false;
                                                                 }
                                                                 timerOn = false;
@@ -633,9 +645,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                         }
                                     }
                                 }, delayThat);
-
                             }
-
                         }
                     }
                 });
