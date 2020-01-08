@@ -533,6 +533,8 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                                 }
                             }
                         }
+                    } else{
+
                     }
                     if (!sentenceToSay.equals("")) {
                         TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
@@ -541,10 +543,10 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
                     } else {
                         if (on) {
                             sentenceToSay = "Η εντολή που δώσατε δεν αναγνωρίστηκε!";
-                            TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                         } else {
-                            sentenceToSay = "";
+                            sentenceToSay = "Πρέπει να ενεργοποιήσετε το κλιματιστικό, για να μπορέσετε να το χειριστείτε.";
                         }
+                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
                     }
                 }
             });

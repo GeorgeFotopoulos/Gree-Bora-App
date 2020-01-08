@@ -523,8 +523,13 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                             if (timerOn) {
                                                 checkIn = 0;
                                                 if (!closeNow) {
-                                                    sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
-                                                    TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    if (!(tempShow.getText()).equals("Cancel")) {
+                                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη απενεργοποιήθηκε.";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    } else {
+                                                        sentenceToSay = "Η λειτουργία χρονοδιακόπτη ακυρώθηκε.";
+                                                        TTS.speak(sentenceToSay, TextToSpeech.QUEUE_ADD, null);
+                                                    }
                                                     tempShow.setTextSize(110);
                                                     tempShow.setText(temperatureShowReal + "");
                                                     gradeDisp.setText("℃");
@@ -587,7 +592,7 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                                         }
                                                         mHandler.post(new Runnable() {
                                                             public void run() {
-                                                                if (!stopped && timerOn) {
+                                                                if (!stopped && countDown <= 0) {
                                                                     final AlertDialog alertDialog = new AlertDialog.Builder(ButtonModeActivity.this).create();
                                                                     alertDialog.setTitle("Time's Up!");
                                                                     alertDialog.setMessage("Το κλιματιστικό κλείνει.");
@@ -629,7 +634,9 @@ public class ButtonModeActivity extends AppCompatActivity implements TextToSpeec
                                         }
                                     }
                                 }, delayThat);
+
                             }
+
                         }
                     }
                 });
