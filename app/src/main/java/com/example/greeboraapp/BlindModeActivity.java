@@ -73,6 +73,38 @@ public class BlindModeActivity extends AppCompatActivity implements TextToSpeech
             temperatureReal = intent.getExtras().getInt("temperature");
         }
 
+        if (modeCount == 2) {
+            modeStr = "Ψυχρή";
+        } else if (modeCount == 3) {
+            modeStr = "Αφύγρανση";
+        } else if (modeCount == 4) {
+            modeStr = "Ανεμιστήρα";
+        } else if (modeCount == 5) {
+            modeStr = "Θερμή";
+        } else {
+            modeStr = "Αυτόματη";
+        }
+
+        if (swingCount == 1) {
+            swingStr = "ολική";
+        } else if (swingCount == 2) {
+            swingStr = "χαμηλή";
+        } else if (swingCount == 3) {
+            swingStr = "μεσαία";
+        } else if (swingCount == 4) {
+            swingStr = "υψηλή";
+        }
+
+        if (fanCount == 1) {
+            fanStr = "αυτόματη";
+        } else if (fanCount == 2) {
+            fanStr = "χαμηλή";
+        } else if (fanCount == 3) {
+            fanStr = "μεσαία";
+        } else {
+            fanStr = "υψηλή";
+        }
+
         gesture = new GestureDetector(new BlindModeActivity.SwipeGestureDetector());
         TextView swipeLeft = findViewById(R.id.swipeLeft);
         TextView swipeRight = findViewById(R.id.swipeRight);
